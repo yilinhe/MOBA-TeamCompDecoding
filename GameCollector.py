@@ -1,7 +1,7 @@
 __author__ = 'yilinhe'
 
 import time
-from riotwatcher import RiotWatcher,LoLException
+from riotwatcher import RiotWatcher
 from storematch import *
 
 f = open('configuration.txt')
@@ -26,12 +26,15 @@ def collect_info():
         counter += 1
         wait()
         try:
-            print "getting: "+ str(start_id+counter)
-            match = w.get_match(start_id+counter, include_timeline=True)
-            print match
-            store_match(match)
+            collect_match(start_id+counter)
         except:
             print "exception while getting: "+ str(start_id+counter)
             continue
 
+def collect_match(match_id):
+    print "getting: "+ str(match_id)
+    match = w.get_match(match_id, include_timeline=True)
+    print match
+    store_match(match)   
+     
 collect_info()
