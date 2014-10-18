@@ -2,7 +2,8 @@ __author__ = 'yilinhe'
 
 import time
 from riotwatcher import RiotWatcher
-from storematch import *
+from MatchStore import *
+from PlayerInfoCollector import *
 
 f = open('configuration.txt')
 api_key = f.read()
@@ -13,28 +14,29 @@ def wait():
     while not w.can_make_request():
         time.sleep(1)
 
-
-def collect_info():
+def collectInformation():
     # check if we have API calls remaining
     print(w.can_make_request())
 
-    start_id = 1521649160
-    print start_id
+    player_list = collectPlayerIds()
 
-    counter = 0
-    while True:
-        counter += 1
-        wait()
-        try:
-            collect_match(start_id+counter)
-        except:
-            print "exception while getting: "+ str(start_id+counter)
-            continue
-
-def collect_match(match_id):
-    print "getting: "+ str(match_id)
-    match = w.get_match(match_id, include_timeline=True)
-    print match
-    store_match(match)   
+    for player in player_list:
+        # get player match history
+        matches = getPlayerMatchHistory()
+        for match in matches:
+            # check if game is already stored
+            if getMatchFromDB(match):
+                continue
+            match_info = getMatch(match)
+            team_100 = {}
+            for player_id, champion_id in match_info['team_100'].items():
+                team_100[champion_id] = getPlayerFamilarity(player_id,champion_id)
+            team_200 = {}
+            for player_id, champion_id in match_info['team_200'].items():
+                team_200[champion_id] = getPlayerFamilarity(player_id,champion_id)
+            match_info['team_100'] = team_100
+            match_info['team_200'] = team_200
+            print match_info
+ 
      
 collect_info()

@@ -16,8 +16,8 @@ def createTables():
     c.execute(tableStr);
 
 
-    # Create PLAYER table
-    tableStr = '''CREATE TABLE matches(playerId LONG, matchId LONG, win BOOLEAN, champId INTEGER, tid INTEGER, info TEXT, PRIMARY KEY (playerId, matchId));'''
+    # Create particitation table
+    tableStr = '''CREATE TABLE participations(playerId LONG, matchId LONG, win BOOLEAN, champId INTEGER, tid INTEGER, info TEXT, PRIMARY KEY (playerId, matchId));'''
     c.execute(tableStr);
 
 	conn.commit()
