@@ -1,0 +1,29 @@
+Task:
+
+Get match information from Riot, lolking and other websites.
+store it in database:
+players table: playerId LONG, pName TEXT, performance TEXT, PRIMARY KEY (playerId)
+matches table: matchId LONG, matchDuration LONG, winner TEXT, team100 TEXT, team200 TEXT, PRIMARY KEY (matchId)
+
+here performance is a dictionary of {champion_id: performance_score} for a player
+team100/200 is a dictionary of {champion_id: performance_score} for a team
+
+Overall, matches store the information we want: game length, winner, champion and the familiarity of (player, champion)
+
+
+How to run this:
+
+1.  please install sqlite3, BeautifulSoup4 and requests library:
+    sqlite3:
+    http://www.sqlite.org/download.html
+    BeautifulSoup4:
+    http://www.crummy.com/software/BeautifulSoup/#Download
+    requests:
+    http://docs.python-requests.org/en/latest/
+
+2.  Get a API key at https://developer.riotgames.com/
+    save the API key in configurations.txt file.
+
+3.  Run CreateTables.py
+
+4.  Run GameCollector.py

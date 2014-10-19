@@ -1,15 +1,11 @@
 __author__ = 'yilinhe'
+from DBConnector import createSqlString, executeQueries
 
-from DBConnector import *
-                
-def getMatch(match_id):
+def getMatch(match):
     '''
     return a dictionary of match result:
     {matchId:match_id, winner:team100, team_100:{p1:champ1 ... p5:champ5}, team_200:{p1:champ1 ... p5:champ5} }
     '''
-
-    print "getting: "+ str(match_id)
-    match = w.get_match(match_id, include_timeline=False)
 
     # Store the participants info relates to this match
     participants = match['participants']
@@ -23,14 +19,16 @@ def getMatch(match_id):
 
     # store the participantion
     for p in participants:
+        player_id = id_dict[p['participantId']]
         if p['teamId'] == 100:
-            team_100[p['participantId']] = p['championId']
+            team_100[player_id] = p['championId']
         else:
-            team_200[p['participantId']] = p['championId']
+            team_200[player_id] = p['championId']
 
     result = {}
     result['matchId'] = match['matchId']
     result['winner'] = winner
+    result['duration'] = match['matchDuration']
     result['team_100'] = team_100
     result['team_200'] = team_200
     return result
@@ -47,5 +45,12 @@ def getWinnerTeam(teams):
     result = {}
     for team in teams:
         result[team['teamId']] = team['winner']
-    return result
+    if result[100]:
+        return 100
+    else:
+        return 200
 
+
+def storeMatchInfo(match):
+    match_info = [match['matchId'], match['duration'], match['winner'], match['team_100'],match['team_200']]
+    executeQueries([createSqlString("matches", match_info)])
