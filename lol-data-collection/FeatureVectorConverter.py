@@ -1,5 +1,6 @@
 from ChampionDictionary import getDict
 import ast
+import sys
 
 id_dict = {'133': 69, '131': 37, '134': 28, '24': 84, '25': 12, '26': 108, '27': 115, '20': 2, '21': 5, '22': 58,
            '23': 64, '28': 0, '29': 62, '161': 31, '4': 9, '8': 18, '120': 68, '121': 33, '122': 119, '267': 26,
@@ -71,5 +72,14 @@ def convertFile(input, outputX, outputY):
     xf.close()
     yf.close()
 
+# This function will take the first argument as input file, then convert it to feature and labels. The outcome
+# are stored under data folder
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+    if len(argv) == 1:
+        print "please provide input file as first argument"
+    convertFile(argv[1], '../data/lolFeature.csv', '../data/lolLabel.csv')
 
-convertFile('matches.dmp', '../data/lolFeature.csv', '../data/lolResult.csv')
+if __name__ == "__main__":
+    main()
