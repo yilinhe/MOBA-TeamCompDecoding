@@ -33,3 +33,7 @@ def getMatchFromDB(match_id):
     i = (match_id,)
     c.execute('SELECT * FROM matches WHERE matchId=?', i)
     return c.fetchone()
+
+def getAllMatchesFromDB():
+    c.execute('SELECT * FROM matches')
+    return c.fetchAll()

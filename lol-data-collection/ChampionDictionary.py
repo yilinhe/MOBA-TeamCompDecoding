@@ -125,6 +125,8 @@ dict = {"aatrox": {"name": "Aatrox", "file": "aatrox", "champion_id": "266", "in
         "zilean": {"name": "Zilean", "file": "zilean", "champion_id": "26", "internal_name": "zilean"},
         "zyra": {"name": "Zyra", "file": "zyra", "champion_id": "143", "internal_name": "zyra"}};
 
+def getDict():
+    return dict
 
 def getChampionInfo(name):
     return dict[name.lower()]
