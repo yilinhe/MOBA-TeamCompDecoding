@@ -5,17 +5,32 @@ from ChampionDictionary import getChampionInfo
 from DBConnector import createSqlString, getPlayerFromDB, executeQueries
 
 
+def loadPlayerIdsFromFile():
+    f = open('players.txt')
+    players = []
+    for row in f.readline():
+        players.append(row)
+    return players
+
 def getPlayerIds():
     '''
     get the top ranked player ids from lolsummoners.com website.
     :return:
     '''
-    for page_num in range(1):
+    # look at challenger and master tier
+    challenger = [1]
+    master = [56849]
+    diamond = [64, 80, 82, 83, 85, 86, 87, 88, 90, 92, 101, 104, 109, 114, 119, 112, 123, 126, 139, 149, 299, 180, 1553,
+               2842, 26450, 27651, 39072, 40681, 50503, 50710]
+    league = challenger+master
+    players = []
+    for page_num in league:
         # Get Data
-        page = urllib2.urlopen("http://www.lolsummoners.com/leagues/na/" + str(page_num + 1))
+        url = "http://www.lolsummoners.com/leagues/na/" + str(page_num)
+        print url
+        page = urllib2.urlopen("http://www.lolsummoners.com/leagues/na/" + str(page_num))
         soup = BeautifulSoup(page)
         k = soup
-        players = []
         # get player id sorted by ranked score
         player_list = [i.findAll('a') for i in k.findAll('td', {"class": "name"})]
         for player in player_list:
@@ -77,3 +92,4 @@ def getPlayerFamilarity(player_id, champion_id):
 
 def getPlayerMatchHistory(match_history):
     return [i['matchId'] for i in match_history['matches']]
+
