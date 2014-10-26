@@ -13,7 +13,7 @@ Overall, matches store the information we want: game length, winner, champion an
 
 How to run this:
 
-1.  please install sqlite3, BeautifulSoup4 and requests library:
+1.  Please install sqlite3, BeautifulSoup4 and requests library:
     sqlite3:
     http://www.sqlite.org/download.html
     BeautifulSoup4:
@@ -25,5 +25,19 @@ How to run this:
     save the API key in configurations.txt file.
 
 3.  Run CreateTables.py
+	This create 2 tables in lol.db file:
+		player table: stores player id, player name and player's per champion performance score based on season 4 stats
+		matches table: stores match id, match duration, winner and team comp for 2 teams
 
 4.  Run GameCollector.py
+	This function collect data from different sources and stores it in our sqlite3 tables.
+	a) Get a list of players to look at. This is contained in PlayerInfoCollector.py and the result was stored in players.txt
+	b) Get match history of players. We only look at the 15 most recent ranked solo Q game from the player. This data was collected from Riot API. 
+	c) For each match, we also look at player-champion familarity. This is obtained by looking at player's past performance and the data was collected from lolking. It is also possible to collect this part of data from Riot API. 
+
+5.  Export the data using following command:
+	$ sqlite3 lol.db "select * from matches" > matches.dmp
+	* the separator for sqlite3 should be |, which is the default separator.
+
+6. 	Convert our data to feature and labels for later training usage.
+	$ python FeatureVectorConverter.py matches.dmp
