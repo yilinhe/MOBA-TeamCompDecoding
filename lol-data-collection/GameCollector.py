@@ -22,7 +22,7 @@ def collectInformation():
     print(w.can_make_request())
 
     # you can either load player ids from file or call getPlayerIds to grab high ranked player ids from other websites.
-    #player_list = getPlayerIds()
+    # player_list = getPlayerIds()
     player_list = open("players.txt").readlines()
     for row in player_list:
         wait()

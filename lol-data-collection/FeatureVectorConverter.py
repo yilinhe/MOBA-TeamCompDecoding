@@ -79,7 +79,11 @@ def main(argv=None):
         argv = sys.argv
     if len(argv) == 1:
         print "please provide input file as first argument"
-    convertFile(argv[1], '../data/lolFeature.csv', '../data/lolLabel.csv')
+    feature = '../data/lolFeature.csv'
+    label = '../data/lolLabel.csv'
+    convertFile(argv[1], feature, label)
+    print "Program Succeeded"
+    print "Output files are stored in", feature, label
 
 if __name__ == "__main__":
     main()
