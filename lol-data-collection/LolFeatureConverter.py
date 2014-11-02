@@ -77,7 +77,7 @@ def convertFile(input, outputX, outputY):
     row = data[-1]
     y, x = convertRow(row)
     xf.write(", ".join(str(i) for i in x))
-    yf.write(str(y))
+    yf.write(", ".join(str(i) for i in y))
 
     xf.close()
     yf.close()
@@ -97,4 +97,4 @@ def main(argv=None):
     print "Output files are stored in", feature, label
 
 if __name__ == "__main__":
-    main(['this','matches.dmp'])
+    main()
