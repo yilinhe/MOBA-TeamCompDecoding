@@ -17,9 +17,9 @@ def convertRow(row):
     feature = [0] * 108
     info = row.split(' ')
     if info[1] == 'WIN:radiant':
-        winner = [0, 1]
+        winner = [0]
     else:
-        winner = [1, 0]
+        winner = [1]
     for hero_picks in info[2:]:
         hero = hero_picks.split(':')
         if len(hero) == 5:

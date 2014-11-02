@@ -35,9 +35,9 @@ def convertRow(row):
     feature = [0] * len(id_dict)
     info = row.split('|')
     if info[2] == '100':
-        winner = [0,1]
+        winner = [0]
     else:
-        winner = [1,0]
+        winner = [1]
 
     team1 = ast.literal_eval(info[3])
     team2 = ast.literal_eval(info[4])
@@ -57,7 +57,7 @@ def convertRow(row):
     for k, v in team2.items():
         id = id_dict[str(k)]
         feature[id] = round(- (v + 0.01), 4)/negSum * 5
-    
+
     return (winner, feature)
 
 
@@ -97,4 +97,5 @@ def main(argv=None):
     print "Output files are stored in", feature, label
 
 if __name__ == "__main__":
+    #main(['thisprogram','matches.dmp'])
     main()
