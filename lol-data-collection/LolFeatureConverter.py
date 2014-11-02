@@ -35,19 +35,29 @@ def convertRow(row):
     feature = [0] * len(id_dict)
     info = row.split('|')
     if info[2] == '100':
-        winner = 0
+        winner = [0,1]
     else:
-        winner = 1
+        winner = [1,0]
 
     team1 = ast.literal_eval(info[3])
     team2 = ast.literal_eval(info[4])
 
+    # calculate sum for normalization
+    posSum = 0
+    negSum = 0
+    for k, v in team1.items():
+        posSum += round(v + 0.01, 4)
+    for k, v in team2.items():
+        negSum += round(v + 0.01, 4)
+
+    # calculate actual value
     for k, v in team1.items():
         id = id_dict[str(k)]
-        feature[id] = round(v + 0.01, 4)
+        feature[id] = round(v + 0.01, 4)/posSum * 5
     for k, v in team2.items():
         id = id_dict[str(k)]
-        feature[id] = round(- (v + 0.01), 4)
+        feature[id] = round(- (v + 0.01), 4)/negSum * 5
+    
     return (winner, feature)
 
 
@@ -63,7 +73,7 @@ def convertFile(input, outputX, outputY):
     for row in data[:-1]:
         y, x = convertRow(row)
         xf.write(", ".join(str(i) for i in x) + '\n')
-        yf.write(str(y) + '\n')
+        yf.write(", ".join(str(i) for i in y) + '\n')
     row = data[-1]
     y, x = convertRow(row)
     xf.write(", ".join(str(i) for i in x))
@@ -71,6 +81,7 @@ def convertFile(input, outputX, outputY):
 
     xf.close()
     yf.close()
+
 
 # This function will take the first argument as input file, then convert it to feature and labels. The outcome
 # are stored under data folder
@@ -86,4 +97,4 @@ def main(argv=None):
     print "Output files are stored in", feature, label
 
 if __name__ == "__main__":
-    main()
+    main(['this','matches.dmp'])
