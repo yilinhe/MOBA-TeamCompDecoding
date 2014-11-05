@@ -104,7 +104,7 @@ We have obtained two data sets for this study, one from the LoL and the other fr
 The data set was collected through public APIs provided by the video game producers Riot and Steam respectively. The APIs can provide us with a given number of most recent completed games as well as the corresponding whole statistics. To make full use of the APIs, we ran our feature collection program on AWS Cloud Computing resources to collect these data in a $7\times24$ manner.
 
 
-\subsection{Data Cleaning}
+\subsection{Data Contents}
 
 The contents of the original data collected from APIs are shown as follow:
 
@@ -118,14 +118,15 @@ The contents of the original data collected from APIs are shown as follow:
 \item \textit{KDA Statistics}: the character's performance in this game, i.e., how many other characters it killed (K), how many times it died (D) and how many times it assisted its teammate to kill the other characters (A).
 \end{itemize}
 
-\subsection{Data Preparation}
+\subsection{Data Cleaning}
 
 As we all known that the performance of machine learning algorithms is heavily dependent on the quality of features. So before extracting features from raw data, we need to do some data cleaning.
 
-First of all, since the public APIs always return the most recent game record, we need to make sure that there is no redundancy in our data set. Besides,
+Since the public APIs always return the most recent game records, we should first to check whether there is any redundancy in our data set. Besides, we need to make sure the data is useful, which can be verified from the game duration. For example, if the game duration is too short, then it is quite possible that some player leaves the game early, so that this record may not be able to support our learning goal and should be dropped. Finally, we will have a look at the KDA statistics, if some character's KDA is below a normal level, then this character may not fully participate into the game. Therefore, the corresponding record should also be dropped.
 
+After finishing these procedures, we can then extract features from the data and train our models.
 
-\section{Models and Evaluations}
+\section{Models and Assumptions}
 
 Since we're going to analyze the team composition of the game, we plan to first divide the data collected into training set and test set. Our approach is mainly supervised learning, so we will use the labelled training data set to train different models like Logistic Regression, SVM and Deep Neural Nets and do model selection.
 
