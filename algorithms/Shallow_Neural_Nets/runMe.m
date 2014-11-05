@@ -3,8 +3,8 @@ clear all; clc;
 
 %% LOAD DATA SET
 
-inputX = csvread('dotaLv3Feature.csv');
-inputY = csvread('dotaLv3Label.csv');
+inputX = csvread('../../data/DotaLv3Feature.csv');
+inputY = csvread('../../data/DotaLv3Label.csv');
 
 % dataset size
 numData = size(inputX, 1);
@@ -22,7 +22,7 @@ input_layer_size  = size(inputX, 2)  % number of heros
 hidden_layer_size = 100     % 25 hidden units
 num_labels = 2              % 2 labels, indicates the winner
 lambda = 0.5                % regularization const
-Iteration = 100             % maximum iteration time
+Iteration = 50             % maximum iteration time
 DATA_SHUFFLE = true         % whether to shuffle the data (may be costful)
 testset_ratio = 0.3         % ratio of the testset in testset + trainingset
                          
