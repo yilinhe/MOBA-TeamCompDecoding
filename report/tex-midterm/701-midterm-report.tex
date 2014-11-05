@@ -39,7 +39,7 @@ amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,balance,a
 School of Computer Science \\ Carnegie Mellon University \\
 Pittsburgh, PA, USA}
 \and
-\IEEEauthorblockN{Yilin He (yinlinhe)}
+\IEEEauthorblockN{Yilin He (yilinhe)}
 \IEEEauthorblockA{Machine Learning Department\\
 School of Computer Science \\ Carnegie Mellon University \\
 Pittsburgh, PA, USA}
@@ -82,24 +82,132 @@ The abstract goes here.
 
 
 \section{Introduction}
-% no \IEEEPARstart
-This demo file is intended to serve as a ``starter file''
-for IEEE conference papers produced under \LaTeX\ using
-IEEEtran.cls version 1.7 and later.
-% You must have at least 2 lines in the paragraph with the drop letter
-% (should never be an issue)
-I wish you the best of success.
 
-\hfill mds
+Multiplayer online battle arena (MOBA) is a rising force in online games that has features of fast paced, single round and team play. In the past few months, more than 27 million players fight with each other per day in one of such kind of game called League of Legends (LoL)\cite{Ian} while millions are attracted by another game called Defense of the Ancient(DotA). International MOBA tournaments are held over the world with a prize pool of over \$10 million\cite{Valve}.  Analysis on MOBA games will not only gain us experience of data analysis but will also be beneficial to players and game companies all over the world.
 
-\hfill January 11, 2007
+In MOBA games like LoL or Dota, two groups of five players are pitted against each other based on their level of game proficiency. In the beginning of a game, each player first picks an unique character out of over 100 options, and these 5 characters picked in a group finally forms a team. Given that the game server usually matches the players with similar levels within a game, then the result of a game should not be affected too much by the skill of each individual player, but depends on the characters combination of different teams, which is known as team composition. Basically, there are more than $\binom{100}{10}\cdot\binom{10}{5}$ kinds of team composition in LoL or DotA, so one of the interesting as well as challenging questions to the online communities and professional teams are how to form a good team composition and how to pick character to achieve the highest winning probability.
 
-\subsection{Subsection Heading Here}
-Subsection text here.
+\section{Related Work}
 
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
+
+
+\section{Data Set}
+We obtained two data set for this study, one for game LoL and another one for DoTA. The data was collected from public APIs provided by each video game producer. Due to the limitation of both API, the content of two data set have small difference but won't influence our analysis.
+
+\subsection{League of Legend}
+LoL data set contains 1,5000 match histories. Each match data point contains the following information:
+\begin{itemize}
+\item winner: whether team A or team B won the game
+\item game duration: how long did each game last // unused for current analysis
+\item team composition for 2 teams: each team has 5 players, therefore there would be 5 characters in each team. Additionally, we score players' performance on the character they played based on their past history. Thus for each team, we stores 5 character-performace pair in the data set:
+	\begin{itemize}
+	\item character identity: which character did play pick
+	\item player's past performance score playing this character.
+	\end{itemize}
+\end{itemize}
+The data set was obtained through Riot's public API and crawling several other public websites. First, we crawled *website 1* to get a list of high level players. Then, we obtained their match history and match result through Riot API. Lastly, we called lolking.com to get players' past performance score. Players' past performance on each champion is also available through Riot API. However, since Riot API have a request rate of 500 requrests/10 mins, we decided to use other public websites to work around it. All the information contained in the dataset are public.
+
+\subsection{Defense of the Ancient}
+DotA dataset contains *insert number* match histories. Overall the data set contains similar information to LoL dataset. The difference is that DotA dataset does not contain players' past performance information on a particular character due to privacy reasons. Each match data point in DotA contains the following information:
+
+\begin{itemize}
+\item winner: whether team A or team B won the game
+\item team composition for 2 teams: each team has 5 players, therefore there would be 5 characters in each team. We also store players' in game performance in the data set. Thus for each team, we stores 5 character and in-game performance pair in the data set:
+	\begin{itemize}
+	\item character identity: which character did play pick
+	\item player's in-game performance on the character. This contains 3 numbers: how many times did player kill another character, how many times did player die and how many times did player assist their teammates to kill another character. //unused
+	\end{itemize}
+\end{itemize}
+The data set was obtained through Steam's public API. This data set was also grouped into 2 subsets, one for players with lower skill and the other one for players with higher skill.
+
+\section{METHODOLOGY}
+Since we're going to analyze the team composition of the game, we plan to first divide the data collected into training set and test set. Our approach is mainly supervised learning, so we will use the labelled training data set to train different models like Logistic Regression, SVM and Deep Neural Nets and do model selection. 
+
+\subsection{Model}
+Assuming there are p characters in the game. The value of p depends on which game we were analyzing. 
+
+\begin{equation}
+p = 
+\begin{cases}
+108 \text{,    in DotA} \\
+121 \text{,    in LoL} \\
+\end{cases}
+\end{equation}
+
+We constructed the feature $x \in \mathbb{R}^p$ for DotA such that:
+
+\begin{equation}
+x_i = 
+\begin{cases}
+1 \text{, if players in team A played character i} \\
+-1 \text{, if players in team B played character i} \\
+0 \text{, otherwise}
+\end{cases}
+\end{equation}
+
+The feature vector for LoL is similar, except that it contains players' performance score for each character. In addition, we normalized players' performance score for each team, such that the performance scores in each team sums up to 5. Assume $s_{ji}$ represents player j's performance score on character i after normalization. Then we can construct the feature $x \in \mathbb{R}^p$ for LoL such that:
+\begin{equation}
+x_i = 
+\begin{cases}
+s_{ji} \text{, if player j in team A played character i} \\
+- s_{ji} \text{, if player j in team B played character i} \\
+0 \text{, otherwise}
+\end{cases}
+\end{equation}
+and
+\[
+\sum_{j \in A} s_{ji}= \sum_{j \in B} s_{ji}= 5
+\]
+
+We define our label $y \in \mathbb{R}^2$ such that:
+\begin{equation}
+y = 
+\begin{cases}
+0 \text{, if team A win} \\
+1 \text{, if team B win} \\
+\end{cases}
+\end{equation}
+\subsection{Baseline}
+
+\subsection{Logistic Regression}
+
+\subsection{SVM}
+
+
+\section{Performance evaluation}
+
+After that, we will first apply the models we get to perform prediction on the test set. Moreover, we will use these models to analyze the importance of team composition, and try to find out probably the best team. At last, we will also compare the performance of different model and draw the conclusion.
+
+
+\section{Plans and Requirement}
+
+Oct 1. - Oct 15: 1. Data collection and Data preparation. Since there is no currently available  data set for our analysis, we plan to write scripts to collect data from public APIs provided by game companies and stores it locally. Most APIs have request rate limits therefore it's likely to take several weeks to collect enough information for our analysis. After we collected some data, we can start prepare the data for running ML algorithms.
+
+Oct 16 -  Oct 23: Implement logistic regression and run it on our data set.
+
+Oct 24 - Oct 31: Implement SVM and run it on our dataset.
+
+Nov 1 - Nov 15: Set up and run deep learning algorithm on our dataset.
+
+Nov 16 - Nov 30: Analysis our result and tune parameters for different algorithm.
+
+To make the project successful, the minimum requirement is the data collection, pre-processing, and algorithms implementation.
+
+\section{Expected Result}
+We plan to make meaningful results with following goals:
+
+\begin{itemize}
+  \item Predict the winner between two given teams with certain precision goal.
+  \item Find out the optimal team composition that can achieve the best results.
+  \item Figure out which feature that has the largest impact on the game result.
+  \item Give recommendation on character selection.
+  \item Have a deep understanding about each learning algorithms and compare their learning performance.
+\end{itemize}
+
+Stretch Goal:
+In MOBA games, team composition is a harder problem than just picking random characters. Since characters plays different ``roles'' in the game, players in a team pick characters that fulfill different roles so they can perform certain in game strategy. This is very similar to traditional sports where soccer coaches might not just pick the highest or the fastest person, but instead pick a right person to be the goalkeeper and couple people for forwards. Therefore a stretch goal would be identify the role of each champion in a particular game and predict win ratio based on these roles.
+
 
 
 % An example of a floating figure using the graphicx package.
@@ -227,20 +335,15 @@ The authors would like to thank...
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{20}
-
-\bibitem{S.Haykin} S. Haykin, ``Cognitive radio: brain-empowered wireless communications,'' \textit{IEEE J. Select. Areas Commun.}, vol. 23, pp.~201--220, Feb. 2005.
 
 
-\bibitem{MatchedFilter} T. Yucek and H. Arslan, ``A survey of spectrum sensing algorithms for
-cognitive radio applications,'' {\it IEEE Commun. Survey \&
-Turtorials}, vol. 11, no. 1, First Quater, 2009.
+\begin{thebibliography}{10}
 
-\bibitem{energydetection2}
-S. Atapattu, C. Tellambura, and H. Jiang, ``Energy detection based cooperative spectrum sensing in cognitive radio networks,'' {\it IEEE Trans. Wireless Commun.}, vol. 10, no. 4, pp. 1232--1241,
-Apr. 2011.
+\bibitem{Ian}
+Ian Sherr, ``Player Tally for League of Legends Surges,'' \textit{Digits RSS. N.p., n.d. Web}. 28 Sept, 2014.
 
-
+\bibitem{Valve}
+Valve, Dota 2 -- 2014 Compendium -- The International. Dota 2 Official Website.
 
 \end{thebibliography}
 
