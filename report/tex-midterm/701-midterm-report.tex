@@ -85,9 +85,19 @@ In this report, we studied the impact of team composition in the massive online 
 
 Multiplayer online battle arena (MOBA) is a rising force in online games that has features of fast paced, single round and team play. In the past few months, more than 27 million players fight with each other per day in one of such kind of game called League of Legends (LoL)\cite{Ian} while millions are attracted by another game called Defense of the Ancient 2 (DotA2). International MOBA tournaments are held over the world with a prize pool of over \$10 million\cite{Valve}.  Analysis on MOBA games will not only gain us experience of data analysis but will also be beneficial to players and game companies all over the world.
 
-In MOBA games like LoL or Dota, two groups of five players are pitted against each other based on their level of game proficiency. In the beginning of a game, each player first picks an unique character out of over 100 options, and these 5 characters picked in a group finally forms a team. Given that the game server usually matches the players with similar levels within a game, then the result of a game should not be affected too much by the skill of each individual player, but depends on the characters combination of different teams, which is known as team composition. Basically, there are more than $\binom{100}{10}\cdot\binom{10}{5}$ kinds of team composition in LoL or DotA, so one of the interesting as well as challenging questions to the online communities and professional teams are how to form a good team composition and how to pick character to achieve the highest winning probability.
+In MOBA games like LoL or DotA 2, two groups of five players are pitted against each other based on their level of game proficiency. In the beginning of a game, each player first picks an unique character out of over 100 options, and these 5 characters picked in a group finally forms a team. Given that the game server usually matches the players with similar levels within a game, then the result of a game should not be affected too much by the skill of each individual player, but depends on the characters combination of different teams, which is known as team composition.
+
+An interesting questions to the online communities as well as professional teams is how to form a good team composition to achieve highest winning probability. The challenging part for this problem is the large number of possible team composition. Since each game contains more than 100 characters, there are more than $\binom{100}{10}\cdot\binom{10}{5}$ kinds of team composition in LoL or DotA 2.
+
 
 \subsection{Goal and Progress}
+
+To answer this question, we can translate it into a classic machine learning problem: given a team composition, predict the outcome for the game. Then we can interpret the parameters in our machine learning algorithm to understand how to form a team composition for MOpBA games.
+
+In the midpoint, we have successfully fulfilled the goal defined in the proposal.
+We collected and cleaned up data for both LoL and DotA 2.
+We built a model to predict game outcome and evaluated it using logistic regression and support vector machine.
+Using the simple model, we achieved an accuracy of *insert number* for LoL and *insert number* for DotA 2.
 
 
 %\subsection{Related Work}
@@ -128,70 +138,38 @@ After finishing these procedures, we can then extract features from the data and
 
 \section{Models and Assumptions}
 
-Since we're going to analyze the team composition of the game, we plan to first divide the data collected into training set and test set. Our approach is mainly supervised learning, so we will use the labelled training data set to train different models like Logistic Regression, SVM and Deep Neural Nets and do model selection.
+In this section, we proposed two models for decoding team composition. The first model is based on ranking the performance of each character while the second model takes the group effect into consideration. We take the first model as the baseline, and mainly apply our ideas in the second model.
 
-\subsection{Model-I: Character Scoring Model}
+To start discussing the models,  let us first define the two teams in the game as $\mathcal{A}$ and $\mathcal{B}$, where each team contains five unique characters (i.e., $c_1,c_2\ldots,c_5$). Moreover, suppose that the game has $N$ characters, then all the characters can be encoded with an integer between $1$ and $N$.
 
-In the character scoring model
+\subsection{Model-I: Character Ranking Model}
 
-Assume we use the following data:
-\begin{itemize}
-\item p: number of characters in the game
-\item $P_{ij}$: player j's performance score on character i in LoL.
-\item (character i, player j) $\in A$: player j played character i in team A
+It is obvious that character plays an important role in affecting the game result. So we may want to
 
-\end{itemize}
-There are p characters in the game. The value of p depends on which game we were analyzing.
+In this character ranking model, we use the game result as the label and the feature vector $\textbf{x}=\{x_1,x_2,\ldots,x_N\}$ to represent the training data. The element $x_i$ indicates the presence of $i$th character in the game, and the detailed value for it is given by
 
-\begin{equation*}
-p =
-\begin{cases}
-108 \text{,    in DotA} \\
-121 \text{,    in LoL} \\
-\end{cases}
-\end{equation*}
-
-We constructed the feature $x \in \mathbb{R}^p$ for DotA such that:
-
-\begin{equation*}
+\begin{equation}
 x_i =
 \begin{cases}
-1 &  \text{(character $i$) $\in A$} \\
--1 &  \text{(character $j$) $\in B$} \\
-0 \text{, otherwise}
+1 &  \text{if $i\in \mathcal{A},$} \\
+-1 &  \text{if $i\in \mathcal{B},$} \\
+0 & \text{otherwise.}
 \end{cases}
-\end{equation*}
+\end{equation}
 
-The feature vector for LoL is similar, except that it contains players' performance score for each character. In addition, we normalized players' performance score for each team, such that the performance scores in each team sums up to 5. Assume $s_{ij}$ represents player j's performance score on character i after normalization. Then we can construct the feature $x \in \mathbb{R}^p$ for LoL such that:
-\begin{equation*}
-x_i =
-\begin{cases}
-s_{ij} &  \text{(character $i$, player $j$) $\in A$}  \\
-- s_{ij} &  \text{(character $i$, player $j$) $\in B$}  \\
-0 \text{, otherwise}
-\end{cases}
-\end{equation*}
-and
-\[
-\sum_{i =0}^p x_i = 0
-\]
+\begin{remark}
+In the character ranking model, what we want to learn is indeed the ``weight''
+\end{remark}
 
-We define our label $y \in \mathbb{R}^2$ such that:
-\begin{equation*}
-y =
-\begin{cases}
-0 \text{, if team A win} \\
-1 \text{, if team B win} \\
-\end{cases}
-\end{equation*}
-\subsection{Baseline}
+\subsection{Model-II: Group Ranking Model}
+
+To derive the Group Ranking Model, we may start by thinking all the aspects that may have a potential influence on the result of the game. 
 
 \subsection{Logistic Regression}
 
-\subsection{SVM}
 
 
-\section{Performance evaluation}
+\section{Performance Evaluation}
 
 After that, we will first apply the models we get to perform prediction on the test set. Moreover, we will use these models to analyze the importance of team composition, and try to find out probably the best team. At last, we will also compare the performance of different model and draw the conclusion.
 
