@@ -55,7 +55,7 @@ Pittsburgh, PA, USA}}
 
 \begin{abstract}
 %\boldmath
-The abstract goes here.
+In this report, we studied the impact of team composition in the massive online battle arena (MOBA) games
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -77,97 +77,112 @@ The abstract goes here.
 %
 % For peerreview papers, this IEEEtran command inserts a page break and
 % creates the second title. It will be ignored for other modes.
-\IEEEpeerreviewmaketitle
+%\IEEEpeerreviewmaketitle
 
 
 
 \section{Introduction}
 
-Multiplayer online battle arena (MOBA) is a rising force in online games that has features of fast paced, single round and team play. In the past few months, more than 27 million players fight with each other per day in one of such kind of game called League of Legends (LoL)\cite{Ian} while millions are attracted by another game called Defense of the Ancient(DotA). International MOBA tournaments are held over the world with a prize pool of over \$10 million\cite{Valve}.  Analysis on MOBA games will not only gain us experience of data analysis but will also be beneficial to players and game companies all over the world.
+Multiplayer online battle arena (MOBA) is a rising force in online games that has features of fast paced, single round and team play. In the past few months, more than 27 million players fight with each other per day in one of such kind of game called League of Legends (LoL)\cite{Ian} while millions are attracted by another game called Defense of the Ancient 2 (DotA2). International MOBA tournaments are held over the world with a prize pool of over \$10 million\cite{Valve}.  Analysis on MOBA games will not only gain us experience of data analysis but will also be beneficial to players and game companies all over the world.
 
 In MOBA games like LoL or Dota, two groups of five players are pitted against each other based on their level of game proficiency. In the beginning of a game, each player first picks an unique character out of over 100 options, and these 5 characters picked in a group finally forms a team. Given that the game server usually matches the players with similar levels within a game, then the result of a game should not be affected too much by the skill of each individual player, but depends on the characters combination of different teams, which is known as team composition. Basically, there are more than $\binom{100}{10}\cdot\binom{10}{5}$ kinds of team composition in LoL or DotA, so one of the interesting as well as challenging questions to the online communities and professional teams are how to form a good team composition and how to pick character to achieve the highest winning probability.
 
-\section{Related Work}
+\subsection{Goal and Progress}
 
 
+%\subsection{Related Work}
+%Conley and Perry have previously worked on predicting win ratio based on heroes picked by the team in DotA 2. In their work, they have reported 69\% accuracy using logistic regression and K-NN.
+
+\subsection{Organization of this Report}
+The remaining of this report is organized as follows: Section II presents the collection of the data set, Section III introduces the learning model and assumptions,
+
+\section{Data Set Preparation}
+We have obtained two data sets for this study, one from the LoL and the other from DotA 2. The whole data set contains more than 80,000 independent game history records in total, which are adequate for our analysis in the first few steps.
+
+\subsection{Data Collection}
+
+The data set was collected through public APIs provided by the video game producers Riot and Steam respectively. The APIs can provide us with a given number of most recent completed games as well as the corresponding whole statistics. To make full use of the APIs, we ran our feature collection program on AWS Cloud Computing resources to collect these data in a $7\times24$ manner.
 
 
-\section{Data Set}
-We obtained two data set for this study, one for game LoL and another one for DoTA. The data was collected from public APIs provided by each video game producer. Due to the limitation of both API, the content of two data set have small difference but won't influence our analysis.
+\subsection{Data Cleaning}
 
-\subsection{League of Legend}
-LoL data set contains 1,5000 match histories. Each match data point contains the following information:
-\begin{itemize}
-\item winner: whether team A or team B won the game
-\item game duration: how long did each game last // unused for current analysis
-\item team composition for 2 teams: each team has 5 players, therefore there would be 5 characters in each team. Additionally, we score players' performance on the character they played based on their past history. Thus for each team, we stores 5 character-performace pair in the data set:
-	\begin{itemize}
-	\item character identity: which character did play pick
-	\item player's past performance score playing this character.
-	\end{itemize}
-\end{itemize}
-The data set was obtained through Riot's public API and crawling several other public websites. First, we crawled *website 1* to get a list of high level players. Then, we obtained their match history and match result through Riot API. Lastly, we called lolking.com to get players' past performance score. Players' past performance on each champion is also available through Riot API. However, since Riot API have a request rate of 500 requrests/10 mins, we decided to use other public websites to work around it. All the information contained in the dataset are public.
+The contents of the original data collected from APIs are shown as follow:
 
-\subsection{Defense of the Ancient}
-DotA dataset contains *insert number* match histories. Overall the data set contains similar information to LoL dataset. The difference is that DotA dataset does not contain players' past performance information on a particular character due to privacy reasons. Each match data point in DotA contains the following information:
 
 \begin{itemize}
-\item winner: whether team A or team B won the game
-\item team composition for 2 teams: each team has 5 players, therefore there would be 5 characters in each team. We also store players' in game performance in the data set. Thus for each team, we stores 5 character and in-game performance pair in the data set:
-	\begin{itemize}
-	\item character identity: which character did play pick
-	\item player's in-game performance on the character. This contains 3 numbers: how many times did player kill another character, how many times did player die and how many times did player assist their teammates to kill another character. //unused
-	\end{itemize}
+\item \textit{Game Id}: An Unique identifier for the game, used to avoid data redundancy;
+\item \textit{Game duration}: how long the each game last, used for data cleaning;
+\item \textit{Winner}: The winning team, used as labels;
+\item \textit{Team composition}: the characters selected by each team, used as main features;
+\item \textit{Skill levels}: the player's performance in his/her past history, used to evaluate the potential performance of this player;
+\item \textit{KDA Statistics}: the character's performance in this game, i.e., how many other characters it killed (K), how many times it died (D) and how many times it assisted its teammate to kill the other characters (A).
 \end{itemize}
-The data set was obtained through Steam's public API. This data set was also grouped into 2 subsets, one for players with lower skill and the other one for players with higher skill.
 
-\section{METHODOLOGY}
-Since we're going to analyze the team composition of the game, we plan to first divide the data collected into training set and test set. Our approach is mainly supervised learning, so we will use the labelled training data set to train different models like Logistic Regression, SVM and Deep Neural Nets and do model selection. 
+\subsection{Data Preparation}
 
-\subsection{Model}
-Assuming there are p characters in the game. The value of p depends on which game we were analyzing. 
+As we all known that the performance of machine learning algorithms is heavily dependent on the quality of features. So before extracting features from raw data, we need to do some data cleaning.
 
-\begin{equation}
-p = 
+First of all, since the public APIs always return the most recent game record, we need to make sure that there is no redundancy in our data set. Besides,
+
+
+\section{Models and Evaluations}
+
+Since we're going to analyze the team composition of the game, we plan to first divide the data collected into training set and test set. Our approach is mainly supervised learning, so we will use the labelled training data set to train different models like Logistic Regression, SVM and Deep Neural Nets and do model selection.
+
+\subsection{Model-I: Character Scoring Model}
+
+In the character scoring model
+
+Assume we use the following data:
+\begin{itemize}
+\item p: number of characters in the game
+\item $P_{ij}$: player j's performance score on character i in LoL.
+\item (character i, player j) $\in A$: player j played character i in team A
+
+\end{itemize}
+There are p characters in the game. The value of p depends on which game we were analyzing.
+
+\begin{equation*}
+p =
 \begin{cases}
 108 \text{,    in DotA} \\
 121 \text{,    in LoL} \\
 \end{cases}
-\end{equation}
+\end{equation*}
 
 We constructed the feature $x \in \mathbb{R}^p$ for DotA such that:
 
-\begin{equation}
-x_i = 
+\begin{equation*}
+x_i =
 \begin{cases}
-1 \text{, if players in team A played character i} \\
--1 \text{, if players in team B played character i} \\
+1 &  \text{(character $i$) $\in A$} \\
+-1 &  \text{(character $j$) $\in B$} \\
 0 \text{, otherwise}
 \end{cases}
-\end{equation}
+\end{equation*}
 
-The feature vector for LoL is similar, except that it contains players' performance score for each character. In addition, we normalized players' performance score for each team, such that the performance scores in each team sums up to 5. Assume $s_{ji}$ represents player j's performance score on character i after normalization. Then we can construct the feature $x \in \mathbb{R}^p$ for LoL such that:
-\begin{equation}
-x_i = 
+The feature vector for LoL is similar, except that it contains players' performance score for each character. In addition, we normalized players' performance score for each team, such that the performance scores in each team sums up to 5. Assume $s_{ij}$ represents player j's performance score on character i after normalization. Then we can construct the feature $x \in \mathbb{R}^p$ for LoL such that:
+\begin{equation*}
+x_i =
 \begin{cases}
-s_{ji} \text{, if player j in team A played character i} \\
-- s_{ji} \text{, if player j in team B played character i} \\
+s_{ij} &  \text{(character $i$, player $j$) $\in A$}  \\
+- s_{ij} &  \text{(character $i$, player $j$) $\in B$}  \\
 0 \text{, otherwise}
 \end{cases}
-\end{equation}
+\end{equation*}
 and
 \[
-\sum_{j \in A} s_{ji}= \sum_{j \in B} s_{ji}= 5
+\sum_{i =0}^p x_i = 0
 \]
 
 We define our label $y \in \mathbb{R}^2$ such that:
-\begin{equation}
-y = 
+\begin{equation*}
+y =
 \begin{cases}
 0 \text{, if team A win} \\
 1 \text{, if team B win} \\
 \end{cases}
-\end{equation}
+\end{equation*}
 \subsection{Baseline}
 
 \subsection{Logistic Regression}
@@ -182,11 +197,41 @@ After that, we will first apply the models we get to perform prediction on the t
 
 \section{Plans and Requirement}
 
-Oct 1. - Oct 15: 1. Data collection and Data preparation. Since there is no currently available  data set for our analysis, we plan to write scripts to collect data from public APIs provided by game companies and stores it locally. Most APIs have request rate limits therefore it's likely to take several weeks to collect enough information for our analysis. After we collected some data, we can start prepare the data for running ML algorithms.
+During our analysis, we realized that linear regression with current feature vector does not accurately represent a team composition. In linear regression, the decision rule is:
+\[
+w_0 + \sum_i w_i x_i <>0
+\]
+which means the algorithm only consider individual characters in the group instead of their combination. For example, if character A has a high win ratio, it will have a higher weight. However, if character A and B are not particularly strong as individual characters, but they synchronize well when they are played together, our logistic regression algorithm can not reflect this fact using a linear decision boundary. Due to this limitation, we plan to generate a new feature vector based on line-ups for the characters.
 
-Oct 16 -  Oct 23: Implement logistic regression and run it on our data set.
+In addition, we will also try assign each character a score, representing their in-game performance.
 
-Oct 24 - Oct 31: Implement SVM and run it on our dataset.
+** define how to calculate this score
+
+Assume we have the following parameter:
+\begin{itemize}
+\item p: number of characters in the game
+\item $C_i$: character score for character i.
+\item $P_{ij}$: player j's performance score on character i in LoL.
+\item (character i, player j) $\in A$: player j played character i in team A
+
+\end{itemize}
+
+We first construct a p by p matrix K such that:
+
+\begin{equation*}
+K_{ij} =
+    \begin{cases}
+        \frac{C_i}{C_{i'}} \frac{P_{ij}}{P_{i'j'}} & \parbox[t]{.3\textwidth}{if (player $j$, character $i$) $\in A$ and (player $j'$, character $i'$) $\in B$  }\\
+        0 & \text{otherwise}
+    \end{cases}
+\end{equation*}
+
+Then we reshape p by p matrix $K$ to obtain the feature vector $x \in \mathbb{R}^{p^2}$ the for DotA such that:
+\[
+x_{(i-1)*p + j} = K_{ij}
+\]
+
+Given this new feature, our plan for rest of the semester is as following:
 
 Nov 1 - Nov 15: Set up and run deep learning algorithm on our dataset.
 
@@ -353,4 +398,20 @@ Valve, Dota 2 -- 2014 Compendium -- The International. Dota 2 Official Website.
 % that's all folks
 \end{document}
 
-
+%\begin{table}[th]\label{Tab:data_content}
+%\centering
+%\begin{tabular}{|c|c|}
+%\hline
+%Content & Description \\
+%\hline
+%Game ID &  \\
+%\hline
+%Game Duration & . \\
+%\hline
+%Winner &  \\
+%\hline
+% Upper Adjacent & -17 \\
+%\hline
+%Digital TV & Lower Adjacent
+%\end{tabular}
+%\end{table}
