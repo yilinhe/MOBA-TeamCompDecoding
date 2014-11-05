@@ -3,8 +3,8 @@
 clear all;clc;
 
 % load data
-inputX = csvread('lolFeature.csv');
-inputY = csvread('lolLabel.csv');
+inputX = csvread('../../data/dotaLv3Feature.csv');
+inputY = csvread('../../data/dotaLv3Label.csv');
 
 % useful info
 numData = size(inputX, 1);
@@ -16,11 +16,11 @@ if numData ~= size(inputY, 1)
 end
 
 % SET THE PARAMETERS HERE
-alpha = 0.002;          % learning rate
-numIter = 100;          % iteration time
+alpha = 0.00005;          % learning rate
+numIter = 200;          % iteration time
 w0 = zeros(featDim, 1); % initial weight w
 DATA_SHUFFLE = true;    % whether to shuffle the data (may be costful)
-testset_ratio = 0.2;    % ratio of the testset in testset + trainingset
+testset_ratio = 0.3;    % ratio of the testset in testset + trainingset
 
 
 % shuffle the input data (if specified)
@@ -65,6 +65,26 @@ for i = 1:length(TestY)
     end
     
     if label == TestY(i)
+        count = count + 1;
+    end
+end
+
+correct_ratio = count / numTestSample
+
+
+
+% classification on the train set
+numTestSample = size(TrainY,1);
+count = 0;
+
+for i = 1:length(TrainY)
+    if Sigmoid(TrainX(i,:), w) > 0.5
+        label = 0;
+    else
+        label = 1;
+    end
+    
+    if label == TrainY(i)
         count = count + 1;
     end
 end
