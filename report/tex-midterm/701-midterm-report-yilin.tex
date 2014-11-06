@@ -208,43 +208,11 @@ After that, we will first apply the models we get to perform prediction on the t
 
 \section{Plans and Requirement}
 
-During our analysis, we realized that linear regression with current feature vector does not accurately represent a team composition. In linear regression, the decision rule is:
-\[
-w_0 + \sum_i w_i x_i <>0
-\]
-which means the algorithm only consider individual characters in the group instead of their combination. For example, if character A has a high win ratio, it will have a higher weight. However, if character A and B are not particularly strong as individual characters, but they synchronize well when they are played together, our logistic regression algorithm can not reflect this fact using a linear decision boundary. Due to this limitation, we plan to generate a new feature vector based on line-ups for the characters.
-
-In addition, we will also try assign each character a score, representing their in-game performance.
-
-** define how to calculate this score
-
-Assume we have the following parameter:
-\begin{itemize}
-\item p: number of characters in the game
-\item $C_i$: character score for character i.
-\item $P_{ij}$: player j's performance score on character i in LoL.
-\item (character i, player j) $\in A$: player j played character i in team A
-
-\end{itemize}
-
-We first construct a p by p matrix K such that:
-
-\begin{equation*}
-K_{ij} =
-    \begin{cases}
-        \frac{C_i}{C_{i'}} \frac{P_{ij}}{P_{i'j'}} & \parbox[t]{.3\textwidth}{if (player $j$, character $i$) $\in A$ and (player $j'$, character $i'$) $\in B$  }\\
-        0 & \text{otherwise}
-    \end{cases}
-\end{equation*}
-
-Then we reshape p by p matrix $K$ to obtain the feature vector $x \in \mathbb{R}^{p^2}$ the for DotA such that:
-\[
-x_{(i-1)*p + j} = K_{ij}
-\]
+Since we have already finished evaluation our first model using deep learning, our next step is building the second model and evaluate it using logistic regression and deep learning.
 
 Given this new feature, our plan for rest of the semester is as following:
 
-Nov 1 - Nov 15: Set up and run deep learning algorithm on our dataset.
+Nov 1 - Nov 15: build second model and run LR and deep learning on the data set.
 
 Nov 16 - Nov 30: Analysis our result and tune parameters for different algorithm.
 

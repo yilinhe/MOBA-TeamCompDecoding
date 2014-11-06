@@ -6,14 +6,6 @@ clear all;clc;
 inputX = csvread('../../data/dotaLv3Feature.csv');
 inputY = csvread('../../data/dotaLv3Label.csv');
 
-% useful info
-numData = size(inputX, 1);
-featDim = size(inputX, 2);
-
-% dataset check
-if numData ~= size(inputY, 1)
-    error('liang', 'input data not valid!');
-end
 
 % SET THE PARAMETERS HERE
 alpha = 0.00005;          % learning rate
@@ -22,71 +14,17 @@ w0 = zeros(featDim, 1); % initial weight w
 DATA_SHUFFLE = true;    % whether to shuffle the data (may be costful)
 testset_ratio = 0.3;    % ratio of the testset in testset + trainingset
 
+numData = size(inputX, 1);
+num_points = 100;
+x_points = zeros(num_points,1);
+train_accs = zeros(num_points,1);
+test_accs = zeros(num_points,1);
 
-% shuffle the input data (if specified)
-XTrain = zeros(numData, featDim);
-YTrain = zeros(numData, 1);
-
-if DATA_SHUFFLE == true
-    randSeq = randperm(size(inputY,1));
-    
-    for i = 1:length(randSeq)
-        XTrain(i,:) = inputX(randSeq(i),:);
-        YTrain(i,:) = inputY(randSeq(i),:);
-    end
-else
-    XTrain = inputX;
-    YTrain = inputY;
+for i = 1:num_points
+    n = exp(log(numData*(1-testset_ratio)))*i/num_points);
+    continue
+    x_points(i) = n;
+    train_accs(i), test_accs(i) = runLR( inputY, inputY, test_samples, alpha, numIter, w0);
 end
 
-
-% create the test set
-numTrainData = floor(numData * (1 - testset_ratio));
-TestX = XTrain(numTrainData+1:numData,:);
-TestY = YTrain(numTrainData+1:numData,:);
-
-TrainX = XTrain(1:numTrainData,:);
-TrainY = YTrain(1:numTrainData,:);
-
-
-% Training logistic classifier
-w = LRTrain( TrainX, TrainY, alpha, numIter, w0);
-
-
-% classification on the test set
-numTestSample = size(TestY,1);
-count = 0;
-
-for i = 1:length(TestY)
-    if Sigmoid(TestX(i,:), w) > 0.5
-        label = 0;
-    else
-        label = 1;
-    end
-    
-    if label == TestY(i)
-        count = count + 1;
-    end
-end
-
-correct_ratio = count / numTestSample
-
-
-
-% classification on the train set
-numTestSample = size(TrainY,1);
-count = 0;
-
-for i = 1:length(TrainY)
-    if Sigmoid(TrainX(i,:), w) > 0.5
-        label = 0;
-    else
-        label = 1;
-    end
-    
-    if label == TrainY(i)
-        count = count + 1;
-    end
-end
-
-correct_ratio = count / numTestSample
+plot(num_points,train_accs);
