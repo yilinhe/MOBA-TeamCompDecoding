@@ -1,0 +1,428 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage{pifont}
+\usepackage{times,amsmath,color, balance,
+amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,balance,algorithmic,mathtools}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+\newtheorem{claim}{Claim}
+\newtheorem{guess}{Conjecture}
+\newtheorem{definition}{Definition}
+\newtheorem{fact}{Fact}
+\newtheorem{assumption}{Assumption}
+\newtheorem{theorem}{\underline{Theorem}}
+\newtheorem{lemma}{\underline{Lemma}}
+\newtheorem{ctheorem}{Corrected Theorem}
+\newtheorem{corollary}{\underline{Corollary}}
+\newtheorem{proposition}{Proposition}
+\newtheorem{example}{\underline{Example}}
+\newtheorem{remark}{\underline{Remark}}
+\newtheorem{problem}{\underline{Problem}}
+\def\Ei{\mathop\mathrm{Ei}}
+\def\E{\mathop\mathrm{E}}
+\def\tr{\mathop\mathrm{tr}}
+\newcounter{mytempeqncnt}
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\begin{document}
+%
+% paper title
+% can use linebreaks \\ within to get better formatting as desired
+\title{Decoding Team Composition in MOBA \\ A Learning Approach}
+
+
+% author names and affiliations
+% use a multiple column layout for up to three different
+% affiliations
+\author{\IEEEauthorblockN{Jiachen Li (jiachenl)}
+\IEEEauthorblockA{Language Technologies Institute \\
+School of Computer Science \\ Carnegie Mellon University \\
+Pittsburgh, PA, USA}
+\and
+\IEEEauthorblockN{Yilin He (yilinhe)}
+\IEEEauthorblockA{Machine Learning Department\\
+School of Computer Science \\ Carnegie Mellon University \\
+Pittsburgh, PA, USA}
+\and
+\IEEEauthorblockN{Chengliang Lian ()}
+\IEEEauthorblockA{Language Technologies Institute \\
+School of Computer Science \\ Carnegie Mellon University \\
+Pittsburgh, PA, USA}}
+
+% make the title area
+\maketitle
+
+
+\begin{abstract}
+%\boldmath
+In this report, we studied the impact of team composition in the massive online battle arena (MOBA) games
+\end{abstract}
+% IEEEtran.cls defaults to using nonbold math in the Abstract.
+% This preserves the distinction between vectors and scalars. However,
+% if the conference you are submitting to favors bold math in the abstract,
+% then you can use LaTeX's standard command \boldmath at the very start
+% of the abstract to achieve this. Many IEEE journals/conferences frown on
+% math in the abstract anyway.
+
+% no keywords
+
+
+
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+%\IEEEpeerreviewmaketitle
+
+
+
+\section{Introduction}
+
+Multiplayer online battle arena (MOBA) is a rising force in online games that has features of fast paced, single round and team play. In the past few months, more than 27 million players fight with each other per day in one of such kind of game called League of Legends (LoL)\cite{Ian} while millions are attracted by another game called Defense of the Ancient 2 (DotA2). International MOBA tournaments are held over the world with a prize pool of over \$10 million\cite{Valve}.  Analysis on MOBA games will not only gain us experience of data analysis but will also be beneficial to players and game companies all over the world.
+
+In MOBA games like LoL or DotA 2, two groups of five players are pitted against each other based on their level of game proficiency. In the beginning of a game, each player first picks an unique character out of over 100 options, and these 5 characters picked in a group finally forms a team. Given that the game server usually matches the players with similar levels within a game, then the result of a game should not be affected too much by the skill of each individual player, but depends on the characters combination of different teams, which is known as team composition.
+
+An interesting questions to the online communities as well as professional teams is how to form a good team composition to achieve highest winning probability. The challenging part for this problem is the large number of possible team composition. Since each game contains more than 100 characters, there are more than $\binom{100}{10}\cdot\binom{10}{5}$ kinds of team composition in LoL or DotA 2.
+
+
+\subsection{Goal and Progress}
+
+To answer this question, we can translate it into a classic machine learning problem: given a team composition, predict the outcome for the game. Then we can interpret the parameters in our machine learning algorithm to understand how to form a team composition for MOpBA games.
+
+In the midpoint, we have successfully fulfilled the goal defined in the proposal.
+We collected and cleaned up data for both LoL and DotA 2.
+We built a model to predict game outcome and evaluated it using logistic regression and support vector machine.
+Using the simple model, we achieved an accuracy of *insert number* for LoL and *insert number* for DotA 2.
+
+
+%\subsection{Related Work}
+%Conley and Perry have previously worked on predicting win ratio based on heroes picked by the team in DotA 2. In their work, they have reported 69\% accuracy using logistic regression and K-NN.
+
+\subsection{Organization of this Report}
+The remaining of this report is organized as follows: Section II presents the collection of the data set, Section III introduces the learning model and assumptions,
+
+\section{Data Set Preparation}
+We have obtained two data sets for this study, one from the LoL and the other from DotA 2. The whole data set contains more than 80,000 independent game history records in total, which are adequate for our analysis in the first few steps.
+
+\subsection{Data Collection}
+
+The data set was collected through public APIs provided by the video game producers Riot and Steam respectively. The APIs can provide us with a given number of most recent completed games as well as the corresponding whole statistics. To make full use of the APIs, we ran our feature collection program on AWS Cloud Computing resources to collect these data in a $7\times24$ manner.
+
+
+\subsection{Data Contents}
+
+The contents of the original data collected from APIs are shown as follow:
+
+
+\begin{itemize}
+\item \textit{Game Id}: An Unique identifier for the game, used to avoid data redundancy;
+\item \textit{Game duration}: how long the each game last, used for data cleaning;
+\item \textit{Winner}: The winning team, used as labels;
+\item \textit{Team composition}: the characters selected by each team, used as main features;
+\item \textit{Skill levels}: the player's performance in his/her past history, used to evaluate the potential performance of this player;
+\item \textit{KDA Statistics}: the character's performance in this game, i.e., how many other characters it killed (K), how many times it died (D) and how many times it assisted its teammate to kill the other characters (A).
+\end{itemize}
+
+\subsection{Data Cleaning}
+
+As we all known that the performance of machine learning algorithms is heavily dependent on the quality of features. So before extracting features from raw data, we need to do some data cleaning.
+
+Since the public APIs always return the most recent game records, we should first to check whether there is any redundancy in our data set. Besides, we need to make sure the data is useful, which can be verified from the game duration. For example, if the game duration is too short, then it is quite possible that some player leaves the game early, so that this record may not be able to support our learning goal and should be dropped. Finally, we will have a look at the KDA statistics, if some character's KDA is below a normal level, then this character may not fully participate into the game. Therefore, the corresponding record should also be dropped.
+
+After finishing these procedures, we can then extract features from the data and train our models.
+
+\section{Models and Assumptions}
+
+In this section, we proposed two models for decoding team composition. The first model is based on ranking the performance of each character while the second model takes the group effect into consideration. We take the first model as the baseline, and mainly apply our ideas in the second model.
+
+To start discussing the models,  let us first define the two teams in the game as $\mathcal{A}$ and $\mathcal{B}$, where each team contains five unique characters (i.e., $c_1,c_2\ldots,c_5$). Moreover, suppose that the game has $N$ characters, then all the characters can be encoded with an integer between $1$ and $N$.
+
+\subsection{Model-I: Character Ranking Model}
+
+It is obvious that character plays an important role in affecting the game result. So we may want to
+
+In this character ranking model, we use the game result as the label and the feature vector $\textbf{x}=\{x_1,x_2,\ldots,x_N\}$ to represent the training data. The element $x_i$ indicates the presence of $i$th character in the game, and the detailed value for it is given by
+
+\begin{equation}
+x_i =
+\begin{cases}
+1 &  \text{if $i\in \mathcal{A},$} \\
+-1 &  \text{if $i\in \mathcal{B},$} \\
+0 & \text{otherwise.}
+\end{cases}
+\end{equation}
+
+\begin{remark}
+In the character ranking model, what we want to learn is indeed the ``weight''
+\end{remark}
+
+\subsection{Model-II: Group Ranking Model}
+
+To derive the Group Ranking Model, we may start by thinking all the aspects that may have a potential influence on the result of the game. 
+
+\subsection{Logistic Regression}
+
+
+
+\section{Performance Evaluation}
+
+After that, we will first apply the models we get to perform prediction on the test set. Moreover, we will use these models to analyze the importance of team composition, and try to find out probably the best team. At last, we will also compare the performance of different model and draw the conclusion.
+
+
+\section{Plans and Requirement}
+
+During our analysis, we realized that linear regression with current feature vector does not accurately represent a team composition. In linear regression, the decision rule is:
+\[
+w_0 + \sum_i w_i x_i <>0
+\]
+which means the algorithm only consider individual characters in the group instead of their combination. For example, if character A has a high win ratio, it will have a higher weight. However, if character A and B are not particularly strong as individual characters, but they synchronize well when they are played together, our logistic regression algorithm can not reflect this fact using a linear decision boundary. Due to this limitation, we plan to generate a new feature vector based on line-ups for the characters.
+
+In addition, we will also try assign each character a score, representing their in-game performance.
+
+** define how to calculate this score
+
+Assume we have the following parameter:
+\begin{itemize}
+\item p: number of characters in the game
+\item $C_i$: character score for character i.
+\item $P_{ij}$: player j's performance score on character i in LoL.
+\item (character i, player j) $\in A$: player j played character i in team A
+
+\end{itemize}
+
+We first construct a p by p matrix K such that:
+
+\begin{equation*}
+K_{ij} =
+    \begin{cases}
+        \frac{C_i}{C_{i'}} \frac{P_{ij}}{P_{i'j'}} & \parbox[t]{.3\textwidth}{if (player $j$, character $i$) $\in A$ and (player $j'$, character $i'$) $\in B$  }\\
+        0 & \text{otherwise}
+    \end{cases}
+\end{equation*}
+
+Then we reshape p by p matrix $K$ to obtain the feature vector $x \in \mathbb{R}^{p^2}$ the for DotA such that:
+\[
+x_{(i-1)*p + j} = K_{ij}
+\]
+
+Given this new feature, our plan for rest of the semester is as following:
+
+Nov 1 - Nov 15: Set up and run deep learning algorithm on our dataset.
+
+Nov 16 - Nov 30: Analysis our result and tune parameters for different algorithm.
+
+To make the project successful, the minimum requirement is the data collection, pre-processing, and algorithms implementation.
+
+\section{Expected Result}
+We plan to make meaningful results with following goals:
+
+\begin{itemize}
+  \item Predict the winner between two given teams with certain precision goal.
+  \item Find out the optimal team composition that can achieve the best results.
+  \item Figure out which feature that has the largest impact on the game result.
+  \item Give recommendation on character selection.
+  \item Have a deep understanding about each learning algorithms and compare their learning performance.
+\end{itemize}
+
+Stretch Goal:
+In MOBA games, team composition is a harder problem than just picking random characters. Since characters plays different ``roles'' in the game, players in a team pick characters that fulfill different roles so they can perform certain in game strategy. This is very similar to traditional sports where soccer coaches might not just pick the highest or the fastest person, but instead pick a right person to be the goalkeeper and couple people for forwards. Therefore a stretch goal would be identify the role of each champion in a particular game and predict win ratio based on these roles.
+
+At present stage, the size of training data set of Dota and LoL have relatively 56082 and 15608 lines. We use the presence of hero in each match as features, that is 108 number of features. If the hero is at team `Dire', then the value is 1, or the value is -1. In LoL, respectively there are 121 features. 
+
+We applied three machine learning model to approach this problem: Logistic Regression, Neural Networks and Support Vector Machine. In Logistic Regression, We select a learning rate of $\alpha = 0.001$, where the proportion of test set is 30\%, which is randomly picked from the dataset. This approach is simple and easy to implement, but this model has some drawbacks that might lead to invalidity of prediction. In Neural Networks model, we choose to use 3 layers: 1 hidden layer with 100 nodes. The input layer has 108 nodes and the output layer has 2 nodes. We implemented feedforward back propagation neural network. Sigmoid transform was applied and lambda in cost function was set to 0.5. 
+
+We could see that Neural Networks has better result on LoL than Dota, this might because that the game LoL focus more on synergy of heroes. That is to say, the selection of hero in the first stage will have more influence on the result of the match.
+
+\begin{table}[h]
+\begin{adjustbox}{width=3.5in}
+\begin{tabular}{|c |c |c |c |c |}
+\hline
+\toprule
+                       & \multicolumn{2}{c|}{LoL}    & \multicolumn{2}{c|}{Dota}   \\ 
+\midrule
+Accuracy (\%)                       & Training   & Test  & Training  & Test  \\ \hline
+Logistic Regression    & 62.55         & 60.62     & 63.06         & 63.48     \\ \hline
+Neural Networks       & 72.63        & 70.77     & 65.12        &64.81     \\ \hline
+Support Vector Machine &                &            &                &            \\ 
+\bottomrule 
+\end{tabular}
+\end{adjustbox}
+\\
+\caption{performance of different algorithms}
+\end{table}
+
+At present stage, the size of training data set of Dota and LoL have relatively 56082 and 15608 lines. We use the presence of hero in each match as features, that is 108 number of features. If the hero is at team `Dire', then the value is 1, or the value is -1. In LoL, respectively there are 121 features. 
+
+We applied three machine learning model to approach this problem: Logistic Regression, Neural Networks and Support Vector Machine. In Logistic Regression, We select a learning rate of $\alpha = 0.001$, where the proportion of test set is 30\%, which is randomly picked from the dataset. This approach is simple and easy to implement, but this model has some drawbacks that might lead to invalidity of prediction. In Neural Networks model, we choose to use 3 layers: 1 hidden layer with 100 nodes. The input layer has 108 nodes and the output layer has 2 nodes. We implemented feedforward back propagation neural network. Sigmoid transform was applied and lambda in cost function was set to 0.5. 
+
+We could see that Neural Networks has better result on LoL than Dota, this might because that the game LoL focus more on synergy of heroes. That is to say, the selection of hero in the first stage will have more influence on the result of the match.
+
+
+% An example of a floating figure using the graphicx package.
+% Note that \label must occur AFTER (or within) \caption.
+% For figures, \caption should occur after the \includegraphics.
+% Note that IEEEtran v1.7 and later has special internal code that
+% is designed to preserve the operation of \label within \caption
+% even when the captionsoff option is in effect. However, because
+% of issues like this, it may be the safest practice to put all your
+% \label just after \caption rather than within \caption{}.
+%
+% Reminder: the "draftcls" or "draftclsnofoot", not "draft", class
+% option should be used if it is desired that the figures are to be
+% displayed while in draft mode.
+%
+%\begin{figure}[!t]
+%\centering
+%\includegraphics[width=2.5in]{myfigure}
+% where an .eps filename suffix will be assumed under latex,
+% and a .pdf suffix will be assumed for pdflatex; or what has been declared
+% via \DeclareGraphicsExtensions.
+%\caption{Simulation Results}
+%\label{fig_sim}
+%\end{figure}
+
+% Note that IEEE typically puts floats only at the top, even when this
+% results in a large percentage of a column being occupied by floats.
+
+
+% An example of a double column floating figure using two subfigures.
+% (The subfig.sty package must be loaded for this to work.)
+% The subfigure \label commands are set within each subfloat command, the
+% \label for the overall figure must come after \caption.
+% \hfil must be used as a separator to get equal spacing.
+% The subfigure.sty package works much the same way, except \subfigure is
+% used instead of \subfloat.
+%
+%\begin{figure*}[!t]
+%\centerline{\subfloat[Case I]\includegraphics[width=2.5in]{subfigcase1}%
+%\label{fig_first_case}}
+%\hfil
+%\subfloat[Case II]{\includegraphics[width=2.5in]{subfigcase2}%
+%\label{fig_second_case}}}
+%\caption{Simulation results}
+%\label{fig_sim}
+%\end{figure*}
+%
+% Note that often IEEE papers with subfigures do not employ subfigure
+% captions (using the optional argument to \subfloat), but instead will
+% reference/describe all of them (a), (b), etc., within the main caption.
+
+
+% An example of a floating table. Note that, for IEEE style tables, the
+% \caption command should come BEFORE the table. Table text will default to
+% \footnotesize as IEEE normally uses this smaller font for tables.
+% The \label must come after \caption as always.
+%
+%\begin{table}[!t]
+%% increase table row spacing, adjust to taste
+%\renewcommand{\arraystretch}{1.3}
+% if using array.sty, it might be a good idea to tweak the value of
+% \extrarowheight as needed to properly center the text within the cells
+%\caption{An Example of a Table}
+%\label{table_example}
+%\centering
+%% Some packages, such as MDW tools, offer better commands for making tables
+%% than the plain LaTeX2e tabular which is used here.
+%\begin{tabular}{|c||c|}
+%\hline
+%One & Two\\
+%\hline
+%Three & Four\\
+%\hline
+%\end{tabular}
+%\end{table}
+
+
+% Note that IEEE does not put floats in the very first column - or typically
+% anywhere on the first page for that matter. Also, in-text middle ("here")
+% positioning is not used. Most IEEE journals/conferences use top floats
+% exclusively. Note that, LaTeX2e, unlike IEEE journals/conferences, places
+% footnotes above bottom floats. This can be corrected via the \fnbelowfloat
+% command of the stfloats package.
+
+
+
+\section{Conclusion}
+The conclusion goes here.
+
+
+
+
+% conference papers do not normally have an appendix
+
+
+% use section* for acknowledgement
+\section*{Acknowledgment}
+
+
+The authors would like to thank...
+
+
+
+
+
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+% references section
+
+% can use a bibliography generated by BibTeX as a .bbl file
+% BibTeX documentation can be easily obtained at:
+% http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
+% The IEEEtran BibTeX style support page is at:
+% http://www.michaelshell.org/tex/ieeetran/bibtex/
+%\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+%\bibliography{IEEEabrv,../bib/paper}
+%
+% <OR> manually copy in the resultant .bbl file
+% set second argument of \begin to the number of references
+% (used to reserve space for the reference number labels box)
+
+
+\begin{thebibliography}{10}
+
+\bibitem{Ian}
+Ian Sherr, ``Player Tally for League of Legends Surges,'' \textit{Digits RSS. N.p., n.d. Web}. 28 Sept, 2014.
+
+\bibitem{Valve}
+Valve, Dota 2 -- 2014 Compendium -- The International. Dota 2 Official Website.
+
+\end{thebibliography}
+
+
+
+
+% that's all folks
+\end{document}
+
+%\begin{table}[th]\label{Tab:data_content}
+%\centering
+%\begin{tabular}{|c|c|}
+%\hline
+%Content & Description \\
+%\hline
+%Game ID &  \\
+%\hline
+%Game Duration & . \\
+%\hline
+%Winner &  \\
+%\hline
+% Upper Adjacent & -17 \\
+%\hline
+%Digital TV & Lower Adjacent
+%\end{tabular}
+%\end{table}
