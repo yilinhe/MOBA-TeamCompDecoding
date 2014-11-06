@@ -10,7 +10,7 @@ function [ w ] = gradDescent( f, fgrad, w0, step, niter)
     
     for i=1:niter
         w = w - step * fgrad(w);
-        logLikelihood = f(w)
+        logLikelihood = f(w);
     end
 end
 

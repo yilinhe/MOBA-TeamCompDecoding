@@ -1,8 +1,10 @@
-function [ acc_train, acc_test ] = runLR( inputY, inputY, test_samples, alpha, numIter, w0)
+function [ acc_train, acc_test ] = runLR( inputX, inputY, test_samples, alpha, numIter, w0)
 
 % useful info
 numData = size(inputX, 1);
 featDim = size(inputX, 2);
+DATA_SHUFFLE = true;    % whether to shuffle the data (may be costful)
+testset_ratio = 0.3;    % ratio of the testset in testset + trainingset
 
 % dataset check
 if numData ~= size(inputY, 1)
@@ -56,7 +58,7 @@ for i = 1:length(TestY)
     end
 end
 
-acc_test = count / numTestSample
+acc_test = count / numTestSample;
 
 % classification on the train set
 numTestSample = size(TrainY,1);
@@ -74,6 +76,5 @@ for i = 1:length(TrainY)
     end
 end
 
-acc_train = count / numTestSample
-
-return [acc_train,acc_test]
+acc_train = count / numTestSample;
+end

@@ -1,4 +1,4 @@
-function [ acc_train, acc_test ] = runSVM( inputY, inputY, test_samples)
+function [ acc_train, acc_test ] = runSVM( inputX, inputY, test_samples)
 
 % useful info
 numData = size(inputX, 1);
@@ -46,8 +46,4 @@ model = svmtrain(TrainX,TrainY,'autoscale',true,'KERNEL_FUNCTION','rbf','boxcons
 [predict_label_train, acc_train] = svmclassify(model, TrainX);
 
 [predict_label_test, acc_test] = svmclassify(model, TestX);
-
-acc_train
-acc_test
-
 end
