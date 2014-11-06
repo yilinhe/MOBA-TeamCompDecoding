@@ -3,6 +3,9 @@
 \usepackage{pifont}
 \usepackage{times,amsmath,color, balance,
 amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,balance,algorithmic,mathtools}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{adjustbox}
 \newtheorem{claim}{Claim}
 \newtheorem{guess}{Conjecture}
 \newtheorem{definition}{Definition}
@@ -232,6 +235,35 @@ We plan to make meaningful results with following goals:
 Stretch Goal:
 In MOBA games, team composition is a harder problem than just picking random characters. Since characters plays different ``roles'' in the game, players in a team pick characters that fulfill different roles so they can perform certain in game strategy. This is very similar to traditional sports where soccer coaches might not just pick the highest or the fastest person, but instead pick a right person to be the goalkeeper and couple people for forwards. Therefore a stretch goal would be identify the role of each champion in a particular game and predict win ratio based on these roles.
 
+At present stage, the size of training data set of Dota and LoL have relatively 56082 and 15608 lines. We use the presence of hero in each match as features, that is 108 number of features. If the hero is at team `Dire', then the value is 1, or the value is -1. In LoL, respectively there are 121 features. 
+
+We applied three machine learning model to approach this problem: Logistic Regression, Neural Networks and Support Vector Machine. In Logistic Regression, We select a learning rate of $\alpha = 0.001$, where the proportion of test set is 30\%, which is randomly picked from the dataset. This approach is simple and easy to implement, but this model has some drawbacks that might lead to invalidity of prediction. In Neural Networks model, we choose to use 3 layers: 1 hidden layer with 100 nodes. The input layer has 108 nodes and the output layer has 2 nodes. We implemented feedforward back propagation neural network. Sigmoid transform was applied and lambda in cost function was set to 0.5. 
+
+We could see that Neural Networks has better result on LoL than Dota, this might because that the game LoL focus more on synergy of heroes. That is to say, the selection of hero in the first stage will have more influence on the result of the match.
+
+\begin{table}[h]
+\begin{adjustbox}{width=3.5in}
+\begin{tabular}{|c |c |c |c |c |}
+\hline
+\toprule
+                       & \multicolumn{2}{c|}{LoL}    & \multicolumn{2}{c|}{Dota}   \\ 
+\midrule
+Accuracy (\%)                       & Training   & Test  & Training  & Test  \\ \hline
+Logistic Regression    & 62.55         & 60.62     & 63.06         & 63.48     \\ \hline
+Neural Networks       & 72.63        & 70.77     & 65.12        &64.81     \\ \hline
+Support Vector Machine &                &            &                &            \\ 
+\bottomrule 
+\end{tabular}
+\end{adjustbox}
+\\
+\caption{performance of different algorithms}
+\end{table}
+
+At present stage, the size of training data set of Dota and LoL have relatively 56082 and 15608 lines. We use the presence of hero in each match as features, that is 108 number of features. If the hero is at team `Dire', then the value is 1, or the value is -1. In LoL, respectively there are 121 features. 
+
+We applied three machine learning model to approach this problem: Logistic Regression, Neural Networks and Support Vector Machine. In Logistic Regression, We select a learning rate of $\alpha = 0.001$, where the proportion of test set is 30\%, which is randomly picked from the dataset. This approach is simple and easy to implement, but this model has some drawbacks that might lead to invalidity of prediction. In Neural Networks model, we choose to use 3 layers: 1 hidden layer with 100 nodes. The input layer has 108 nodes and the output layer has 2 nodes. We implemented feedforward back propagation neural network. Sigmoid transform was applied and lambda in cost function was set to 0.5. 
+
+We could see that Neural Networks has better result on LoL than Dota, this might because that the game LoL focus more on synergy of heroes. That is to say, the selection of hero in the first stage will have more influence on the result of the match.
 
 
 % An example of a floating figure using the graphicx package.
