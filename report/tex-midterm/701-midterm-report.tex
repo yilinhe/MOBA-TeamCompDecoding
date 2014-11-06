@@ -2,7 +2,10 @@
 
 \usepackage{pifont}
 \usepackage{times,amsmath,color, balance,
-amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,balance,algorithmic,mathtools,booktabs}
+amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,balance,algorithmic,mathtools}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{adjustbox}
 \newtheorem{claim}{Claim}
 \newtheorem{guess}{Conjecture}
 \newtheorem{definition}{Definition}
@@ -44,7 +47,7 @@ Pittsburgh, PA, USA}
 School of Computer Science \\ Carnegie Mellon University \\
 Pittsburgh, PA, USA}
 \and
-\IEEEauthorblockN{Chengliang Lian ()}
+\IEEEauthorblockN{Chengliang Lian (clian)}
 \IEEEauthorblockA{Language Technologies Institute \\
 School of Computer Science \\ Carnegie Mellon University \\
 Pittsburgh, PA, USA}}
@@ -55,7 +58,8 @@ Pittsburgh, PA, USA}}
 
 \begin{abstract}
 %\boldmath
-In this report, we studied the impact of team composition in the massive online battle arena (MOBA) games
+Team composition has been a interesting as well as challenging problem especially in the setting of competitive online games. A good team composition will strongly improve your chance for wining, while a bad team composition may probably ruin your game.
+In this report, we studied the impact of team composition in the massive online battle arena (MOBA) games. We collected data from two most popular MOBA games, and then proposed two feature models to represent these data. Machine learning algorithms with different characteristics such as logistic regression and neural networks are used to evaluate our works, and results shows that 
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -170,30 +174,83 @@ Of course, the winner team will work as the label of the feature.
 
 \subsection{Model-II: Group Ranking Model}
 
-Unlike the character ranking model where we make the independent assumption between player skills and game results. The group ranking model not only considers the player skills, but also take the relationship of different character into account. For example, Fig. 1 shows all the aspect that may affect the final result of a game, and we can see that the performance of one specific character should affect all the other characters in the different team. This is not difficult to understand because all the characters in a team will work together to achieve their final goal, and 
+\begin{figure}[t]
+  \centering
+    \includegraphics[width=65mm]{team_comp.pdf}
+  \caption{An illustration of team composition and the aspects that may influences the game result.}
+  \label{fig:team_comp}
+\end{figure}
+
+Unlike the character ranking model where we make the independent assumption between player skills and game results. The group ranking model not only considers the player skills, but also take the relationship of different characters into account. For example, Fig. \ref{fig:team_comp} has shown the factors that may have potential influence on the game result. It can be seen from the figure that the performance of one specific character should affect all the other characters in the different team. This is not difficult to understand because there are many times in the game that all the characters in a team will need to work together to achieve their goals. Therefore, to learn the team composition, we need also use such information.
+
+To utilize these additional information, we first introduce the character matrix.
+\begin{definition}
+A matrix $A \in \mathbb{R}^{N\times N}$ is called the character matrix if the element $a_{i,j}$ indicates the probability that the team with character $j$ beats the team with character $j$, i.e. $a_{i,j}=\text{Pr}\{\text{team with $c_i$ beats team with $c_j$}\}$.
+\end{definition}
+
+The character matrix gives us an evaluation between different character pair that can be used for learning. However, to obtain a more complete feature we may also need to add the impact of the players (i.e., use a function $g(P_{\mathcal{A},i},P_{\mathcal{B},j})$ to evaluate the winning ratio between two players), so the final feature could be a matrix $F \in \mathbb{R}^{N\times N}$ based on this information. The element of feature matrix is defined as
+\begin{equation}
+f_{i,j}=a_{i,j} \cdot g(P_{\mathcal{A},i},P_{\mathcal{B},j}),
+\end{equation}
+where the $a_{i,j}$ is the element from character matrix, $g(P_{\mathcal{A},i},P_{\mathcal{B},j})$ is the function that measure the winning ratio between the player in group $\mathcal{A}$ using character $i$ and the player in group $\mathcal{B}$ using character $j$. Notice that we can multiply these two elements because they are independent.
+
+\begin{remark}
+There is no doubt that the feature matrix contains more information than the plain character feature in the character ranking model. However, one of the biggest challenge when applying the feature matrix is its high dimension (i.e. $N\times N$, which will also lead to the sparsity of the parameters). To solve this problem, we will use the clustering methods to cluster the $N$ characters into $K$ groups, so that the comparison between two individual characters will become the comparison between two clusters. Thus the dimension problem will be reduced. (This will be the one of the work during the second part of this semester.)
+\end{remark}   
 
 
-
-
-\subsection{Logistic Regression}
-
-\begin{table}[h]
-\begin{tabular}{c c c c c}
-\hline
-\toprule
-                       & \multicolumn{2}{c}{LoL}    & \multicolumn{2}{c}{Dota}   \\
-\midrule
-                       & Training Accuracy (\%) & Test Accuracy & Training Accuracy & Test Accuracy \\ \hline
-Logistic Regression    & 62.55         & 60.62     & 63.06         & 64.48     \\ \hline
-Neural Networks        & 72.63        & 70.77     & 65.12        &64.81     \\ \hline
-Support Vector Machine &                &            &                &            \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \section{Performance Evaluation}
 
-After that, we will first apply the models we get to perform prediction on the test set. Moreover, we will use these models to analyze the importance of team composition, and try to find out probably the best team. At last, we will also compare the performance of different model and draw the conclusion.
+\begin{table}[h]
+\begin{adjustbox}{width=3.5in}
+\begin{tabular}{|c |c |c |c |c |}
+\hline
+\toprule
+                       & \multicolumn{2}{c|}{LoL}    & \multicolumn{2}{c|}{Dota}   \\
+\midrule
+Accuracy (\%)                       & Training   & Test  & Training  & Test  \\ \hline
+Logistic Regression    & 62.55         & 60.62     & 63.06         & 63.48     \\ \hline
+Neural Networks       & 72.63        & 70.77     & 65.12        &64.81     \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\\
+\caption{performance of different algorithms}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+    \includegraphics[width=90mm]{dota2_logreg_error.pdf}
+  \caption{The error probability of logistic regression on the DotA 2 dataset.}
+  \label{fig:dota2_log}
+\end{figure}
+
+
+\begin{figure}[t]
+  \centering
+    \includegraphics[width=90mm]{lol_logreg_error.pdf}
+  \caption{The error probability of logistic regression on the LoL dataset.}
+  \label{fig:lol_log}
+\end{figure}
+
+
+
+\subsection{Evaluation of logistic regression}
+
+In Logistic Regression, We select a learning rate of $\alpha = 0.001$, where the proportion of test set is 30\%, which is randomly picked from the dataset. For each data set, the iteration time for gradient decent is 100 during the training. We plot the size of training size vs test/training error.
+This figure represents the learning curve for logistic regression algorithm. With small number of training examples, we obtained a small training error and a large testing error. As we increase the number of training examples, the training error increase and testing error decreases. For DotA 2, both test error and training error converges to 0.365 after around 10,000 training points.
+
+The weight vector we obtained in logistic regression represents each character's influence on game result. For character $i$, a positive weight $w_i$ implies having this character in team increases the chance of winning. Therefore, the prediction is based on individual characters and does not consider synergy between characters.
+
+\subsection{Evaluation of neural network}
+In neural networks model, we choose to use 3 layers: 1 hidden layer with 100 nodes. The input layer has p nodes and the output layer has 2 nodes. We implemented feedforward back propagation neural network. Sigmoid transform was applied and lambda in cost function was set to 0.5.
+
+\subsection{Comparison of algorithms}
+While we can not directly interpret the parameters we obtained from neural networks model, the high accuracy shows the importance of considering the relationship between selected characters. Since logistic regression has a linear decision boundary, it can only make prediction based on a linear combination of individual characters. Therefore, logistic regression can not capture the relationship between selected characters. On the other side, the learning process of Neural Network combines input feature in the hidden layer to take consideration of the relationship between selected characters.
+
+\subsection{Comparison of data sets}
+Logistic regression yield similar accuracy for LoL and DotA 2 while neural networks has better result on LoL than DotA 2. This result from logistic regression implies that in LoL and DotA 2, selection of individual characters have similar impact on game result. One possible explanation for higher accuracy in LoL data set when using neural networks is that the team composition in LoL focus more on the synergy between characters, thus considering more complicated relationship between characters gives better result.
 
 
 \section{Plans and Requirement}
