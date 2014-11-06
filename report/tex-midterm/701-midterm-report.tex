@@ -107,8 +107,8 @@ Using the simple model, we achieved an accuracy of $60.62\%$ for LoL and $63.48\
 %\subsection{Related Work}
 %Conley and Perry have previously worked on predicting win ratio based on heroes picked by the team in DotA 2. In their work, they have reported 69\% accuracy using logistic regression and K-NN.
 
-\subsection{Organization of this Report}
-The remaining of this report is organized as follows: Section II presents the collection of the data set, Section III introduces the learning model and assumptions,
+%\subsection{Organization of this Report}
+%The remaining of this report is organized as follows: Section II presents the collection of the data set, Section III introduces the learning model and assumptions,
 
 \section{Data Set Preparation}
 We have obtained two data sets for this study, one from the LoL and the other from DotA 2. The whole data set contains more than 80,000 independent game history records in total, which are adequate for our analysis in the first few steps.
@@ -223,13 +223,14 @@ There is no doubt that the feature matrix contains more information than the pla
 
 \subsection{Evaluation of logistic regression}
 
-Fig. 2 and 3 show the error probability versus training sample on two dataset with Logistic Regression, We select a learning rate of $\alpha = 0.001$, the proportion of test set is 30\%, which is randomly picked from the dataset. For each data set, the iteration time for gradient decent is 100 during the training. We plot the size of training size vs test/training error.
-This figure represents the learning curve for logistic regression algorithm. With small number of training examples, we obtained a small training error and a large testing error. As we increase the number of training examples, the training error increase and testing error decreases. For DotA 2, both test error and training error converges to 0.365 after around 10,000 training points.
+Fig. 2 and 3 show the error probability versus training sample on two dataset with Logistic Regression, We select a learning rate of $\alpha = 0.001$, the proportion of test set is 30\%, which is randomly picked from the dataset. For each data set, the iteration time for gradient decent is 100 during the training. 
 
-The weight vector we obtained in logistic regression represents each character's influence on game result. For character $i$, a positive weight $w_i$ implies having this character in team increases the chance of winning. Therefore, the prediction is based on individual characters and does not consider synergy between characters.
+This figure represents the learning curve for logistic regression algorithm. With small number of training examples, we obtained a small training error and a large testing error. As we increase the number of training examples, the training error increase and testing error decreases. For DotA 2, both test error and training error converges to $36.5\%$ after around 10,000 training points.
+
+The weight vector we obtained in logistic regression represents each character's influence on game result. For character $i$, a positive weight $w_i$ implies that picking this character will increase the chance of winning. Therefore, the prediction is based on individual characters and does not consider synergy between characters.
 
 \subsection{Evaluation of neural network}
-In neural networks model, we choose to use 3 layers: 1 hidden layer with 100 nodes. The input layer has p nodes and the output layer has 2 nodes. We implemented feedforward back propagation neural network. Sigmoid transform was applied and lambda in cost function was set to 0.5.
+In neural networks model, we choose to use 3 layers: 1 hidden layer with 100 nodes. The input layer has p nodes and the output layer has 2 nodes. We implemented feedforward back propagation neural network. Sigmoid transform was applied and lambda in cost function was set to 0.5. (Since the evaluation of error probability versus the number of sample is too expensive for neural networks, we didn't do that in this midway report, but we will add it in the final report)
 
 \subsection{Comparison of algorithms}
 
@@ -272,6 +273,7 @@ During first half of the semester, we finished the goal we set in the proposal i
 Our current results shows that the team composition does have connection with game results and the relationship is encodable. However, due to the limitation of original model, we proposed a second model to encode the relationship between selected characters and the players.
 
 For the remaining semester, our plan is shown as follows
+p
 Nov 1 - Nov 15: Set up and run logistic regression and deep learning algorithm on our dataset using new model.
 
 Nov 16 - Nov 30: Analysis our result and tune parameters for different algorithm.
@@ -383,7 +385,7 @@ To make the project successful, the minimum requirement is not longer the data c
 
 
 
-% trigger a \newpage just before the given reference
+%p trigger a \newpage just before the given reference
 % number - used to balance the columns on the last page
 % adjust value as needed - may need to be readjusted if
 % the document is modified later
