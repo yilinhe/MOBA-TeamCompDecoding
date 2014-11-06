@@ -209,53 +209,6 @@ While we can not directly interpret the parameters we obtained from neural netwo
 
 \subsection{Comparison of data sets}
 Logistic regression yield similar accuracy for LoL and DotA 2 while neural networks has better result on LoL than DotA 2. This result from logistic regression implies that in LoL and DotA 2, selection of individual characters have similar impact on game result. One possible explanation for higher accuracy in LoL data set when using neural networks is that the team composition in LoL focus more on the synergy between characters, thus considering more complicated relationship between characters gives better result. 
-\section{Plans and Requirement}
-
-During our analysis, we realized that linear regression with current feature vector does not accurately represent a team composition. In linear regression, the decision rule is:
-\[
-w_0 + \sum_i w_i x_i <>0
-\]
-which means the algorithm only consider individual characters in the group instead of their combination. For example, if character A has a high win ratio, it will have a higher weight. However, if character A and B are not particularly strong as individual characters, but they synchronize well when they are played together, our logistic regression algorithm can not reflect this fact using a linear decision boundary. Due to this limitation, we plan to generate a new feature vector based on line-ups for the characters.
-
-In addition, we will also try assign each character a score, representing their in-game performance.
-
-** define how to calculate this score
-
-Assume we have the following parameter:
-\begin{itemize}
-\item p: number of characters in the game
-\item $C_i$: character score for character i.
-\item $P_{ij}$: player j's performance score on character i in LoL.
-\item (character i, player j) $\in A$: player j played character i in team A
-
-\end{itemize}
-
-We first construct a p by p matrix K such that:
-
-\begin{equation*}
-K_{ij} =
-    \begin{cases}
-        \frac{C_i}{C_{i'}} \frac{P_{ij}}{P_{i'j'}} & \parbox[t]{.3\textwidth}{if (player $j$, character $i$) $\in A$ and (player $j'$, character $i'$) $\in B$  }\\
-        0 & \text{otherwise}
-    \end{cases}
-\end{equation*}
-
-Then we reshape p by p matrix $K$ to obtain the feature vector $x \in \mathbb{R}^{p^2}$ the for DotA such that:
-\[
-x_{(i-1)*p + j} = K_{ij}
-\]
-
-Given this new feature, our plan for rest of the semester is as following:
-
-Nov 1 - Nov 15: Set up and run deep learning algorithm on our dataset.
-
-Nov 16 - Nov 30: Analysis our result and tune parameters for different algorithm.
-
-To make the project successful, the minimum requirement is the data collection, pre-processing, and algorithms implementation.
-
-
-
-During first half of the semester, we finished the goal we set in the proposal including: collect 2 data set, run logistic regression and 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
 % For figures, \caption should occur after the \includegraphics.
@@ -341,7 +294,27 @@ During first half of the semester, we finished the goal we set in the proposal i
 
 
 \section{Conclusion and Future Plan}
-The conclusion goes here.
+
+Team composition has been a interesting as well as challenging problem especially in the setting of competitive online games. A good team composition will strongly improve your chance for wining, while a bad team composition may probably ruin your game.
+
+In this report, we studied the team composition in the massive online battle arena (MOBA) games, and tried to decode the impact of team composition.
+During first half of the semester, we finished the goal we set in the proposal including: 
+\begin{itemize}
+\item collect data set from LoL and DotA 2
+\item build feature model 
+\item run logistic regression on each data set
+\item run neural network on each data set
+\end{itemize}
+
+Our current results shows that the team composition does have connection with game results and the relationship is encodable. However, due to the limitation of original model, we proposed a second model to encode the relationship between selected characters and the players.
+
+For the remaining semester, our plan is shown as follows
+Nov 1 - Nov 15: Set up and run logistic regression and deep learning algorithm on our dataset using new model.
+
+Nov 16 - Nov 30: Analysis our result and tune parameters for different algorithm.
+
+To make the project successful, the minimum requirement is not longer the data collection, pre-processing and algorithms implementation, but to validate our model and make a better analysis and learn well.
+
 
 
 
