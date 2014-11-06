@@ -2,12 +2,12 @@
 
 \usepackage{pifont}
 \usepackage{times,amsmath,color, balance,
-amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,balance,algorithmic,mathtools}
+amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,balance,algorithmic,mathtools,booktabs}
 \newtheorem{claim}{Claim}
 \newtheorem{guess}{Conjecture}
 \newtheorem{definition}{Definition}
 \newtheorem{fact}{Fact}
-\newtheorem{assumption}{Assumption}
+\newtheorem{assumption}{\underline{Assumption}}
 \newtheorem{theorem}{\underline{Theorem}}
 \newtheorem{lemma}{\underline{Lemma}}
 \newtheorem{ctheorem}{Corrected Theorem}
@@ -85,18 +85,18 @@ In this report, we studied the impact of team composition in the massive online 
 
 Multiplayer online battle arena (MOBA) is a rising force in online games that has features of fast paced, single round and team play. In the past few months, more than 27 million players fight with each other per day in one of such kind of game called League of Legends (LoL)\cite{Ian} while millions are attracted by another game called Defense of the Ancient 2 (DotA2). International MOBA tournaments are held over the world with a prize pool of over \$10 million\cite{Valve}.  Analysis on MOBA games will not only gain us experience of data analysis but will also be beneficial to players and game companies all over the world.
 
-In MOBA games like LoL or DotA 2, two groups of five players are pitted against each other based on their level of game proficiency. In the beginning of a game, each player first picks an unique character out of over 100 options, and these 5 characters picked in a group finally forms a team. Given that the game server usually matches the players with similar levels within a game, then the result of a game should not be affected too much by the skill of each individual player, but depends on the characters combination of different teams, which is known as team composition. 
+In MOBA games like LoL or DotA 2, two groups of five players are pitted against each other based on their level of game proficiency. In the beginning of a game, each player first picks an unique character out of over 100 options, and these 5 characters picked in a group finally forms a team. Given that the game server usually matches the players with similar levels within a game, then the result of a game should not be affected too much by the skill of each individual player, but depends on the characters combination of different teams, which is known as team composition.
 
 An interesting questions to the online communities as well as professional teams is how to form a good team composition to achieve highest winning probability. The challenging part for this problem is the large number of possible team composition. Since each game contains more than 100 characters, there are more than $\binom{100}{10}\cdot\binom{10}{5}$ kinds of team composition in LoL or DotA 2.
 
 
 \subsection{Goal and Progress}
 
-To answer this question, we can translate it into a classic machine learning problem: given a team composition, predict the outcome for the game. Then we can interpret the parameters in our machine learning algorithm to understand how to form a team composition for MoBA games.
- 
-In the midpoint, we have successfully fulfilled the goal defined in the proposal. 
+To answer this question, we can translate it into a classic machine learning problem: given a team composition, predict the outcome for the game. Then we can interpret the parameters in our machine learning algorithm to understand how to form a team composition for MOpBA games.
+
+In the midpoint, we have successfully fulfilled the goal defined in the proposal.
 We collected and cleaned up data for both LoL and DotA 2.
-We built a model to predict game outcome and evaluated it using logistic regression and support vector machine. 
+We built a model to predict game outcome and evaluated it using logistic regression and support vector machine.
 Using the simple model, we achieved an accuracy of *insert number* for LoL and *insert number* for DotA 2.
 
 
@@ -138,102 +138,124 @@ After finishing these procedures, we can then extract features from the data and
 
 \section{Models and Assumptions}
 
-Since we're going to analyze the team composition of the game, we plan to first divide the data collected into training set and test set. Our approach is mainly supervised learning, so we will use the labelled training data set to train different models like Logistic Regression, SVM and Deep Neural Nets and do model selection.
+In this section, we proposed two models for decoding team composition. The first model is based on ranking the performance of each character while the second model takes the group effect into consideration. We take the first model as the baseline, and mainly apply our ideas in the second model.
 
-\subsection{Model-I: Character Scoring Model}
 
-In the character scoring model
+To start discussing the models,  let us first define the two teams in the game as $\mathcal{A}$ and $\mathcal{B}$, where each team contains five unique characters (i.e., $c_1,c_2\ldots,c_5$). Moreover, suppose that the game has $N$ characters, then all the characters can be encoded with an integer between $1$ and $N$.
 
-Assume we use the following data:
+\subsection{Model-I: Character Ranking Model}
+
+In the character ranking model, what we really want to learn is the ``weight'' of different characters, which measures how important the characters to a team. To introduce the that, we may first need to make some assumption:
+
+\begin{assumption}
+We assume that players in both team all have high skills. Moreover, they are proficient with the characters they pick.
+\end{assumption}
+
+\begin{remark}
+This assumption is reasonable because, during the data collection part, we only collected the records with a higher skill levels. Moreover, in order to win the game, players are not likely to pick the characters that they are not familiar with, especially for the high level player.
+\end{remark}
+
+With this assumption, we can further assume that the game result is independent of the players, then we can use the vector $\textbf{x}=\{x_1,x_2,\ldots,x_N\}$ to represent the training feature. The element $x_i$ indicates the presence of $i$th character in the game, and the detailed value for it is given by
+
+\begin{equation}
+x_i =
+\begin{cases}
+1 &  \text{if $i\in \mathcal{A},$} \\
+-1 &  \text{if $i\in \mathcal{B},$} \\
+0 & \text{otherwise.}
+\end{cases}
+\end{equation}
+Of course, the winner team will work as the label of the feature.
+
+
+\subsection{Model-II: Group Ranking Model}
+
+Unlike the character ranking model where we make the independent assumption between player skills and game results. The group ranking model not only considers the player skills, but also take the relationship of different character into account. For example, Fig. 1 shows all the aspect that may affect the final result of a game, and we can see that the performance of one specific character should affect all the other characters in the different team. This is not difficult to understand because all the characters in a team will work together to achieve their final goal, and 
+
+
+
+
+\subsection{Logistic Regression}
+
+\begin{table}[h]
+\begin{tabular}{c c c c c}
+\hline
+\toprule
+                       & \multicolumn{2}{c}{LoL}    & \multicolumn{2}{c}{Dota}   \\
+\midrule
+                       & Training Accuracy (\%) & Test Accuracy & Training Accuracy & Test Accuracy \\ \hline
+Logistic Regression    & 62.55         & 60.62     & 63.06         & 64.48     \\ \hline
+Neural Networks        & 72.63        & 70.77     & 65.12        &64.81     \\ \hline
+Support Vector Machine &                &            &                &            \\
+\bottomrule
+\end{tabular}
+\end{table}
+\section{Performance Evaluation}
+
+
+
+\subsection{Evaluation of logistic regression}
+
+In Logistic Regression, We select a learning rate of $\alpha = 0.001$, where the proportion of test set is 30\%, which is randomly picked from the dataset. For each data set, the iteration time for gradient decent is 100 during the training. We plot the size of training size vs test/training error.
+This figure represents the learning curve for logistic regression algorithm. With small number of training examples, we obtained a small training error and a large testing error. As we increase the number of training examples, the training error increase and testing error decreases. For DotA 2, both test error and training error converges to 0.365 after around 10,000 training points.
+
+The weight vector we obtained in logistic regression represents each character's influence on game result. For character $i$, a positive weight $w_i$ implies having this character in team increases the chance of winning. Therefore, the prediction is based on individual characters and does not consider synergy between characters.
+
+\subsection{Evaluation of neural network}
+In Neural Networks model, we choose to use 3 layers: 1 hidden layer with 100 nodes. The input layer has p nodes and the output layer has 2 nodes. We implemented feedforward back propagation neural network. Sigmoid transform was applied and lambda in cost function was set to 0.5. 
+
+\subsection{Comparison of algorithms}
+While we can not directly interpret the parameters we obtained from Neural Networks model, the high accuracy shows the importance of considering the relationship between selected characters. Since logistic regression has a linear decision boundary, it can only make prediction based on a linear combination of individual characters. Therefore, logistic regression can not capture the relationship between selected characters. On the other side, the learning process of Neural Network combines input feature in the hidden layer to take consideration of the relationship between selected characters.
+
+\subsection{Comparison of data sets}
+Logistic Regression yield similar accuracy for LoL and DotA 2 while Neural Networks has better result on LoL than DotA 2. This result from Logistic Regression implies that in LoL and DotA 2, selection of individual characters have similar impact on game result. One possible explanation for higher accuracy in LoL data set when using Neural Networks is that the team composition in LoL focus more on the synergy between characters, thus considering more complicated relationship between characters gives better result. 
+\section{Plans and Requirement}
+
+During our analysis, we realized that linear regression with current feature vector does not accurately represent a team composition. In linear regression, the decision rule is:
+\[
+w_0 + \sum_i w_i x_i <>0
+\]
+which means the algorithm only consider individual characters in the group instead of their combination. For example, if character A has a high win ratio, it will have a higher weight. However, if character A and B are not particularly strong as individual characters, but they synchronize well when they are played together, our logistic regression algorithm can not reflect this fact using a linear decision boundary. Due to this limitation, we plan to generate a new feature vector based on line-ups for the characters.
+
+In addition, we will also try assign each character a score, representing their in-game performance.
+
+** define how to calculate this score
+
+Assume we have the following parameter:
 \begin{itemize}
 \item p: number of characters in the game
+\item $C_i$: character score for character i.
 \item $P_{ij}$: player j's performance score on character i in LoL.
 \item (character i, player j) $\in A$: player j played character i in team A
 
 \end{itemize}
-There are p characters in the game. The value of p depends on which game we were analyzing.
+
+We first construct a p by p matrix K such that:
 
 \begin{equation*}
-p =
-\begin{cases}
-108 \text{,    in DotA} \\
-121 \text{,    in LoL} \\
-\end{cases}
+K_{ij} =
+    \begin{cases}
+        \frac{C_i}{C_{i'}} \frac{P_{ij}}{P_{i'j'}} & \parbox[t]{.3\textwidth}{if (player $j$, character $i$) $\in A$ and (player $j'$, character $i'$) $\in B$  }\\
+        0 & \text{otherwise}
+    \end{cases}
 \end{equation*}
 
-We constructed the feature $x \in \mathbb{R}^p$ for DotA such that:
-
-\begin{equation*}
-x_i =
-\begin{cases}
-1 &  \text{(character $i$) $\in A$} \\
--1 &  \text{(character $j$) $\in B$} \\
-0 \text{, otherwise}
-\end{cases}
-\end{equation*}
-
-The feature vector for LoL is similar, except that it contains players' performance score for each character. In addition, we normalized players' performance score for each team, such that the performance scores in each team sums up to 5. Assume $s_{ij}$ represents player j's performance score on character i after normalization. Then we can construct the feature $x \in \mathbb{R}^p$ for LoL such that:
-\begin{equation*}
-x_i =
-\begin{cases}
-s_{ij} &  \text{(character $i$, player $j$) $\in A$}  \\
-- s_{ij} &  \text{(character $i$, player $j$) $\in B$}  \\
-0 \text{, otherwise}
-\end{cases}
-\end{equation*}
-and
+Then we reshape p by p matrix $K$ to obtain the feature vector $x \in \mathbb{R}^{p^2}$ the for DotA such that:
 \[
-\sum_{i =0}^p x_i = 0
+x_{(i-1)*p + j} = K_{ij}
 \]
-
-We define our label $y \in \mathbb{R}^2$ such that:
-\begin{equation*}
-y =
-\begin{cases}
-0 \text{, if team A win} \\
-1 \text{, if team B win} \\
-\end{cases}
-\end{equation*}
-\subsection{Baseline}
-
-\subsection{Logistic Regression}
-
-\subsection{SVM}
-
-
-\section{Performance evaluation}
-
-After that, we will first apply the models we get to perform prediction on the test set. Moreover, we will use these models to analyze the importance of team composition, and try to find out probably the best team. At last, we will also compare the performance of different model and draw the conclusion.
-
-
-\section{Plans and Requirement}
-
-Since we have already finished evaluation our first model using deep learning, our next step is building the second model and evaluate it using logistic regression and deep learning.
 
 Given this new feature, our plan for rest of the semester is as following:
 
-Nov 1 - Nov 15: build second model and run LR and deep learning on the data set.
+Nov 1 - Nov 15: Set up and run deep learning algorithm on our dataset.
 
 Nov 16 - Nov 30: Analysis our result and tune parameters for different algorithm.
 
 To make the project successful, the minimum requirement is the data collection, pre-processing, and algorithms implementation.
 
-\section{Expected Result}
-We plan to make meaningful results with following goals:
-
-\begin{itemize}
-  \item Predict the winner between two given teams with certain precision goal.
-  \item Find out the optimal team composition that can achieve the best results.
-  \item Figure out which feature that has the largest impact on the game result.
-  \item Give recommendation on character selection.
-  \item Have a deep understanding about each learning algorithms and compare their learning performance.
-\end{itemize}
-
-Stretch Goal:
-In MOBA games, team composition is a harder problem than just picking random characters. Since characters plays different ``roles'' in the game, players in a team pick characters that fulfill different roles so they can perform certain in game strategy. This is very similar to traditional sports where soccer coaches might not just pick the highest or the fastest person, but instead pick a right person to be the goalkeeper and couple people for forwards. Therefore a stretch goal would be identify the role of each champion in a particular game and predict win ratio based on these roles.
 
 
-
+During first half of the semester, we finished the goal we set in the proposal including: collect 2 data set, run logistic regression and 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
 % For figures, \caption should occur after the \includegraphics.
@@ -318,7 +340,7 @@ In MOBA games, team composition is a harder problem than just picking random cha
 
 
 
-\section{Conclusion}
+\section{Conclusion and Future Plan}
 The conclusion goes here.
 
 
