@@ -2,12 +2,12 @@
 
 \usepackage{pifont}
 \usepackage{times,amsmath,color, balance,
-amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,balance,algorithmic,mathtools}
+amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,balance,algorithmic,mathtools,booktabs}
 \newtheorem{claim}{Claim}
 \newtheorem{guess}{Conjecture}
 \newtheorem{definition}{Definition}
 \newtheorem{fact}{Fact}
-\newtheorem{assumption}{Assumption}
+\newtheorem{assumption}{\underline{Assumption}}
 \newtheorem{theorem}{\underline{Theorem}}
 \newtheorem{lemma}{\underline{Lemma}}
 \newtheorem{ctheorem}{Corrected Theorem}
@@ -140,13 +140,22 @@ After finishing these procedures, we can then extract features from the data and
 
 In this section, we proposed two models for decoding team composition. The first model is based on ranking the performance of each character while the second model takes the group effect into consideration. We take the first model as the baseline, and mainly apply our ideas in the second model.
 
+
 To start discussing the models,  let us first define the two teams in the game as $\mathcal{A}$ and $\mathcal{B}$, where each team contains five unique characters (i.e., $c_1,c_2\ldots,c_5$). Moreover, suppose that the game has $N$ characters, then all the characters can be encoded with an integer between $1$ and $N$.
 
 \subsection{Model-I: Character Ranking Model}
 
-It is obvious that character plays an important role in affecting the game result. So we may want to
+In the character ranking model, what we really want to learn is the ``weight'' of different characters, which measures how important the characters to a team. To introduce the that, we may first need to make some assumption:
 
-In this character ranking model, we use the game result as the label and the feature vector $\textbf{x}=\{x_1,x_2,\ldots,x_N\}$ to represent the training data. The element $x_i$ indicates the presence of $i$th character in the game, and the detailed value for it is given by
+\begin{assumption}
+We assume that players in both team all have high skills. Moreover, they are proficient with the characters they pick.
+\end{assumption}
+
+\begin{remark}
+This assumption is reasonable because, during the data collection part, we only collected the records with a higher skill levels. Moreover, in order to win the game, players are not likely to pick the characters that they are not familiar with, especially for the high level player.
+\end{remark}
+
+With this assumption, we can further assume that the game result is independent of the players, then we can use the vector $\textbf{x}=\{x_1,x_2,\ldots,x_N\}$ to represent the training feature. The element $x_i$ indicates the presence of $i$th character in the game, and the detailed value for it is given by
 
 \begin{equation}
 x_i =
@@ -156,18 +165,30 @@ x_i =
 0 & \text{otherwise.}
 \end{cases}
 \end{equation}
+Of course, the winner team will work as the label of the feature.
 
-\begin{remark}
-In the character ranking model, what we want to learn is indeed the ``weight''
-\end{remark}
 
 \subsection{Model-II: Group Ranking Model}
 
-To derive the Group Ranking Model, we may start by thinking all the aspects that may have a potential influence on the result of the game. 
+Unlike the character ranking model where we make the independent assumption between player skills and game results. The group ranking model need to take more consideration into account. To give a full intuition on 
+
+To derive the Group Ranking Model, we may start by thinking all the aspects that may have a potential influence on the result of the game.
 
 \subsection{Logistic Regression}
 
-
+\begin{table}[h]
+\begin{tabular}{c c c c c}
+\hline
+\toprule
+                       & \multicolumn{2}{c}{LoL}    & \multicolumn{2}{c}{Dota}   \\
+\midrule
+                       & Training Accuracy (\%) & Test Accuracy & Training Accuracy & Test Accuracy \\ \hline
+Logistic Regression    & 62.55         & 60.62     & 63.06         & 64.48     \\ \hline
+Neural Networks        & 72.63        & 70.77     & 65.12        &64.81     \\ \hline
+Support Vector Machine &                &            &                &            \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Performance Evaluation}
 
