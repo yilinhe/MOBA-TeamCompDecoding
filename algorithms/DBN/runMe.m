@@ -72,10 +72,10 @@ fprintf('Pre-training\n');
 
 %train dbn as rbm
 dbn.sizes = [100 54 32];
-opts.numepochs =   5;
-opts.batchsize = 200;
-opts.momentum  =   0;
-opts.alpha     =   0.1;
+opts.numepochs =   10;
+opts.batchsize = 400;
+opts.momentum  =   0.9;
+opts.alpha     =   0.01;
 dbn = dbnsetup(dbn, train_x, opts);
 dbn = dbntrain(dbn, train_x, opts);
 
@@ -85,8 +85,8 @@ nn.activation_function = 'sigm';
 
 fprintf('Fine-tune\n');
 %train nn
-opts.numepochs =  20;
-opts.batchsize = 200;
+opts.numepochs =  50;
+opts.batchsize = 400;
 opts.output = 'softmax';
 nn = nntrain(nn, train_x, train_y, opts);
 [er, bad] = nntest(nn, test_x, test_y);
