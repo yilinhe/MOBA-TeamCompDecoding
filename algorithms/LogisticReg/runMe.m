@@ -44,6 +44,7 @@ plot(x_points, 1-train_accs, 'k', x_points, 1-test_accs, 'b');
 xlabel('Number of samples');
 ylabel('Error probability');
 legend('Training error','Test error', 'Location','SouthEast');
+xlim([100,10956]);
 
 
 
