@@ -15,6 +15,7 @@ def getId(hero_id):
 # y = 0 if radiant wins, y = 1 if dire wins
 def convertRow(row):
     feature = [0] * 108
+    print row
     info = row.split(' ')
     if info[1] == 'WIN:radiant':
         winner = [0]
@@ -27,6 +28,8 @@ def convertRow(row):
             if kda[0] == 0 and kda[1] == 0 and kda[2] == 0:
                 return None, None
         hero_id = getId(hero[1]) - 1
+	if hero_id > 108:
+		continue
         team = hero[2]
         if team == 'radiant':
             feature[hero_id] = 1
@@ -45,6 +48,7 @@ def convertFile(input, outputX, outputY):
     f.close()
     cnt = 0
     for row in data[:-1]:
+	print row
         y, x = convertRow(row)
         if x is None or y is None:
             cnt += 1
@@ -72,12 +76,12 @@ def main(argv=None):
     if len(argv) == 1:
         print "please provide input file as first argument"
 
-    feature = '../data/dotaLv2Feature.csv'
-    label = '../data/dotaLv2Label.csv'
+    feature = '../data/dotaLv2Feature_11_23.csv'
+    label = '../data/dotaLv2Label_11_23.csv'
     convertFile(argv[1], feature, label)
 
-    feature = '../data/dotaLv3Feature.csv'
-    label = '../data/dotaLv3Label.csv'
+    feature = '../data/dotaLv3Feature_11_23.csv'
+    label = '../data/dotaLv3Label_11_23.csv'
     convertFile(argv[2], feature, label)
 
     print "Program Succeeded"
@@ -86,6 +90,5 @@ def main(argv=None):
 # run this function by calling
 # $ python DotaFeatureConverter.py ../data/dota2_match.data
 if __name__ == "__main__":
-   main(['thisfunction', '../data/data-by20141101-jk/level2/level2_match.data',
-          '../data/data-by20141101-jk/level3/level3_match.data'])
+   main(['thisfunction', '../data/new_data_11_23/match_data_lv2_20141123.txt', '../data/new_data_11_23/match_data_lv3_20141123.txt'])
    #main()
