@@ -30,7 +30,7 @@ def convertRow(row):
             tk.append(kda[0])
             td.append(kda[1])
         #remove the total killer or death that is less than 10
-    if sum(tk) < 10 or sum(td) < 10:
+    if sum(tk) < 20 or sum(td) < 20:
         return None, None
     for hero_picks in info[2:]:
         hero = hero_picks.split(':')
