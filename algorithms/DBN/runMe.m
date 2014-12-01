@@ -6,8 +6,11 @@ clear all; clc;
 
 %% LOAD DATA SET
 
-inputX = csvread('../../data/DotaLv3Feature.csv');
-inputY = csvread('../../data/DotaLv3Label.csv');
+inputX = csvread('newFeat.csv');%newFeat.csv
+inputY = csvread('label.csv');
+
+%inputX = inputX(1:50000,:);
+%inputY = inputY(1:50000,:);
 
 % dataset size
 numData = size(inputX, 1);
@@ -20,7 +23,7 @@ end
 % label create
 inputYY = zeros(numData,2);
 for i = 1:numData
-    if inputY(i) == 0
+    if inputY(i) == 1
         inputYY(i,:)=[1,0];
     else
         inputYY(i,:)=[0,1];
@@ -29,7 +32,7 @@ end
 
 %% SETUP THE PARAMETERS YOU WILL USE FOR THE NN TRAINING
 input_layer_size  = size(inputX, 2)  % number of heros
-DATA_SHUFFLE = true         % whether to shuffle the data (may be costful)
+DATA_SHUFFLE = false        % whether to shuffle the data (may be costful)
 testset_ratio = 0.2         % ratio of the testset in testset + trainingset
                          
 fprintf('Please check the parameters. Press enter to continue.\n');
@@ -48,13 +51,13 @@ if DATA_SHUFFLE == true
     end
 else
     XTrain = inputX;
-    YTrain = inputY;
+    YTrain = inputYY;
 end
 
 % normalization (important for DBN)
-maxX = max(max(XTrain));
-minX = min(min(XTrain));
-XTrain = (XTrain - minX) / (maxX-minX); % TODO: should do linewise
+%maxX = max(max(XTrain));
+%minX = min(min(XTrain));
+%XTrain = (XTrain - minX) / (maxX-minX); % TODO: should do linewise
 
 % create the test set
 numTrainData = floor(numData * (1 - testset_ratio));
@@ -71,7 +74,7 @@ rand('state',0);
 fprintf('Pre-training\n');
 
 %train dbn as rbm
-dbn.sizes = [100 54 32];
+dbn.sizes = [108 54 54];
 opts.numepochs =   10;
 opts.batchsize = 400;
 opts.momentum  =   0.9;
@@ -85,10 +88,11 @@ nn.activation_function = 'sigm';
 
 fprintf('Fine-tune\n');
 %train nn
-opts.numepochs =  50;
+opts.numepochs =  20;
 opts.batchsize = 400;
 opts.output = 'softmax';
+opts.alpha   =  0.001;
 nn = nntrain(nn, train_x, train_y, opts);
 [er, bad] = nntest(nn, test_x, test_y);
 
-test_error = er
+test_acc = 1 - er
