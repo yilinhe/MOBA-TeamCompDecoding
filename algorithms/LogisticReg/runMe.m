@@ -3,8 +3,8 @@
 clear all;clc;
 
 % load data
-inputX = csvread('../../data/lolFeature.csv');
-inputY = csvread('../../data/lolLabel.csv');
+inputX = csvread('../../data/kda_10Filtered/dota2_lv3Feature.csv');
+inputY = csvread('../../data/kda_10Filtered/dota2_lv3Label.csv');
 
 featDim = size(inputX, 2);
 
@@ -27,7 +27,7 @@ for i = 1:num_points
     sum1 = 0;
     sum2 = 0;
     for j = 1:num_iteration
-        [t1,t2 ] = runLR(inputX, inputY, n, alpha, numIter, w0);
+        [t1,t2 ] = runLRPenalty(inputX, inputY, n, alpha, numIter, w0);
         sum1 = sum1 + t1;
         sum2 = sum2+t2;
     end

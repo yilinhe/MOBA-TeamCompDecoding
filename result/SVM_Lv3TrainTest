@@ -1,0 +1,9 @@
+SVM_feature3_csv
+model = svmtrain(TrainY,TrainX,'-h 0 -t 2 -g 0.07 -b 0.01');
+............................................*
+optimization finished, #iter = 44565
+nu = 0.681721
+obj = -27491.961414, rho = 0.819319
+nSV = 33845, nBSV = 28149
+Total nSV = 33845
+Accuracy = 67.9913% (3439/5058) (classification)

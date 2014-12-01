@@ -1,10 +1,10 @@
 % automatic testing script for support vector machine
-% author: ~jk~
+% author: ~clian~
 clear all;clc;
 
 % load data: seems lol feature is not working
-inputX = csvread('dotaLv3Feature.csv');
-inputY = csvread('dotaLv3Label.csv');
+inputX = csvread('../../data/kda_10Filtered/dota2_lv3Feature.csv');
+inputY = csvread('../../data/kda_10Filtered/dota2_lv3Label.csv');
 
 % useful info
 numData = size(inputX, 1);
@@ -16,7 +16,7 @@ if numData ~= size(inputY, 1)
 end
 
 % SET THE PARAMETERS HERE
-DATA_SHUFFLE = false;    % whether to shuffle the data (may be costful)
+DATA_SHUFFLE = true;    % whether to shuffle the data (may be costful)
 testset_ratio = 0.1;    % ratio of the testset in testset + trainingset
 
 
