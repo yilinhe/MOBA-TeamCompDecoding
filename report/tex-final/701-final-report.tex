@@ -1,8 +1,8 @@
 \documentclass[conference]{IEEEtran}
 
 \usepackage{pifont}
-\usepackage{times,amsmath,color, balance,
-amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,balance,algorithmic,mathtools}
+\usepackage{times,amsmath,color, balance,tabularx,caption,
+amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,algorithmic,mathtools}
 \usepackage{longtable}
 \usepackage{booktabs}
 \usepackage{adjustbox}
@@ -234,20 +234,18 @@ In neural networks model, we choose to use 3 layers: 1 hidden layer with 100 nod
 
 \subsection{Comparison of algorithms}
 
-\begin{table}[h]
+\begin{table}[ht]
+\center
+\captionsetup{font={small}}
 \caption{performance of different algorithms}
-\begin{adjustbox}{width=3.5in}
 \begin{tabular}{|c |c |c |c |c |}
 \hline
-\toprule
-                       & \multicolumn{2}{c|}{LoL}    & \multicolumn{2}{c|}{Dota 2}   \\
-\midrule
+& \multicolumn{2}{c|}{LoL}    & \multicolumn{2}{c|}{Dota 2}   \\
+\hline
 Accuracy (\%)                       & Training   & Test  & Training  & Test  \\ \hline
 Logistic Regression    & 62.55         & 60.62     & 63.06         & 63.48     \\ \hline
-Neural Networks       & 72.63        & 70.77     & 65.12        &64.81     \\
-\bottomrule
+Neural Networks       & 72.63        & 70.77     & 65.12        &64.81     \\ \hline
 \end{tabular}
-\end{adjustbox}
 \end{table}
 
 While we can not directly interpret the parameters we obtained from neural networks model, the high accuracy shows the importance of considering the relationship between selected characters. Since logistic regression has a linear decision boundary, it can only make prediction based on a linear combination of individual characters. Therefore, logistic regression can not capture the relationship between selected characters. On the other side, the learning process of Neural Network combines input feature in the hidden layer to take consideration of the relationship between selected characters.
@@ -257,7 +255,7 @@ Logistic regression yield similar accuracy for LoL and DotA 2 while neural netwo
 
 
 
-\section{Conclusion and Future Plan}
+\section{Conclusion and Future Work}
 
 Team composition has been a interesting as well as challenging problem especially in the setting of competitive online games. A good team composition will strongly improve your chance for wining, while a bad team composition may probably ruin your game.
 
