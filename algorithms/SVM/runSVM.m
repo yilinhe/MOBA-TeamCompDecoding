@@ -1,10 +1,10 @@
 % automatic testing script for support vector machine
 % author: ~clian~
-clear all;clc;
-
+%clear all;clc;
+function res = runSVM(sss)
 % load data: seems lol feature is not working
-inputX = csvread('../../data/kda_10Filtered/dota2_lv3Feature.csv');
-inputY = csvread('../../data/kda_10Filtered/dota2_lv3Label.csv');
+inputX = csvread('../../data/newFeat.csv');
+inputY = csvread('../../data/label.csv');
 
 % useful info
 numData = size(inputX, 1);
@@ -36,8 +36,11 @@ else
     YTrain = inputY(:,1);
 end
 
+XTrain = XTrain(1: sss,:);
+YTrain = YTrain(1: sss,:);
 
 % create the test set
+numData = sss;
 numTrainData = floor(numData * (1 - testset_ratio));
 TestX = XTrain(numTrainData+1:numData,:);
 TestY = YTrain(numTrainData+1:numData,:);
@@ -53,5 +56,7 @@ model = svmtrain(TrainY,TrainX,'-h 0 -t 2 -g 0.07 -b 0.01');
 %predict_label_train = svmclassify(model, TrainX);
 
 [predict_label_L, accuracy_L, dec_values_L] = svmpredict(TestY, TestX, model);
+end
+
 
 
