@@ -1,8 +1,10 @@
 *.gz
 *.aux
 *.log
-*.pdf
 *.bbl
 *.blg
 *.bak
 *.asv
+report/tex-final/701-final-report.pdf
+report/tex-proposal/701-proposal.pdf
+report/tex-midterm/701-midterm-report.pdf
