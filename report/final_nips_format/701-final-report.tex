@@ -1,11 +1,15 @@
-\documentclass[conference]{IEEEtran}
-
+\documentclass{article} % For LaTeX2e
+\usepackage{nips13submit_e}
+\usepackage{hyperref}
+\usepackage{url}
+%\documentstyle[nips13submit_09,times,art10]{article} % For LaTeX 2.09
 \usepackage{pifont}
 \usepackage{times,amsmath,color, balance,tabularx,caption,
 amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,algorithmic,mathtools}
 \usepackage{longtable}
 \usepackage{booktabs}
 \usepackage{adjustbox}
+
 \newtheorem{claim}{Claim}
 \newtheorem{guess}{Conjecture}
 \newtheorem{definition}{Definition}
@@ -24,75 +28,51 @@ amssymb,graphicx,epsfig,cite,psfrag,subfigure,algorithm,multirow,cases,algorithm
 \def\tr{\mathop\mathrm{tr}}
 \newcounter{mytempeqncnt}
 
-% correct bad hyphenation here
-\hyphenation{op-tical net-works semi-conduc-tor}
+\title{Decoding Team Composition in MOBA Games \\ A Learning Approach}
+
+
+\author{
+Jiachen Li$^*$, Yilin He$^\dag$, and Chengliang Lian$^*$\\
+Language Technologies Institute$^*$ and Machine Learning Department$^\dag$ \\ School of Computer Science \\
+Carnegie Mellon University, Pittsburgh, PA, 15213 \\
+\texttt{\{jiachenl, yilinhe, clian\}@andrew.cmu.edu}
+}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+\nipsfinalcopy % Uncomment for camera-ready version
 
 \begin{document}
-%
-% paper title
-% can use linebreaks \\ within to get better formatting as desired
-\title{Decoding Team Composition in MOBA \\ A Learning Approach}
 
 
-% author names and affiliations
-% use a multiple column layout for up to three different
-% affiliations
-\author{\IEEEauthorblockN{Jiachen Li (jiachenl)}
-\IEEEauthorblockA{Language Technologies Institute \\
-School of Computer Science \\ Carnegie Mellon University \\
-Pittsburgh, PA, USA}
-\and
-\IEEEauthorblockN{Yilin He (yilinhe)}
-\IEEEauthorblockA{Machine Learning Department\\
-School of Computer Science \\ Carnegie Mellon University \\
-Pittsburgh, PA, USA}
-\and
-\IEEEauthorblockN{Chengliang Lian (clian)}
-\IEEEauthorblockA{Language Technologies Institute \\
-School of Computer Science \\ Carnegie Mellon University \\
-Pittsburgh, PA, USA}}
-
-% make the title area
 \maketitle
 
-
 \begin{abstract}
-%\boldmath
 Team composition has been a interesting as well as challenging problem especially in the setting of competitive online games. A good team composition will strongly improve your chance for wining, while a bad team composition may probably ruin your game.
 In this report, we studied the team composition in the massive online battle arena (MOBA) games, and tried to decode the impact of team composition. We collected data from two most popular MOBA games, and then proposed two feature models to represent these data. Machine learning algorithms with different characteristics such as logistic regression and neural networks are used to evaluate our works, and our current results shows that the team composition does have influence on game results and this relationship is decodable.
 \end{abstract}
-% IEEEtran.cls defaults to using nonbold math in the Abstract.
-% This preserves the distinction between vectors and scalars. However,
-% if the conference you are submitting to favors bold math in the abstract,
-% then you can use LaTeX's standard command \boldmath at the very start
-% of the abstract to achieve this. Many IEEE journals/conferences frown on
-% math in the abstract anyway.
-
-% no keywords
-
-
-
-
-% For peer review papers, you can put extra information on the cover
-% page as needed:
-% \ifCLASSOPTIONpeerreview
-% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
-% \fi
-%
-% For peerreview papers, this IEEEtran command inserts a page break and
-% creates the second title. It will be ignored for other modes.
-%\IEEEpeerreviewmaketitle
-
-
 
 \section{Introduction}
+
+
+%\begin{center}
+%   \url{http://papers.nips.cc}
+%\end{center}
 
 Multiplayer online battle arena (MOBA) is a rising force in online games that has features of fast paced, single round and team play. In the past few months, more than 27 million players fight with each other per day in one of such kind of game called League of Legends (LoL)\cite{Ian} while millions are attracted by another game called Defense of the Ancient 2 (DotA2). International MOBA tournaments are held over the world with a prize pool of over \$10 million\cite{Valve}.  Analysis on MOBA games will not only gain us experience of data analysis but will also be beneficial to players and game companies all over the world.
 
 In MOBA games like LoL or DotA 2, two groups of five players are pitted against each other based on their level of game proficiency. In the beginning of a game, each player first picks an unique character out of over 100 options, and these 5 characters picked in a group finally forms a team. Given that the game server usually matches the players with similar levels within a game, then the result of a game should not be affected too much by the skill of each individual player, but depends on the characters combination of different teams, which is known as team composition.
 
 An interesting questions to the online communities as well as professional teams is how to form a good team composition to achieve highest winning probability. The challenging part for this problem is the large number of possible team composition. Since each game contains more than 100 characters, there are more than $\binom{100}{10}\cdot\binom{10}{5}$ kinds of team composition in LoL or DotA 2.
-
 
 \subsection{Goal and Progress}
 
@@ -109,7 +89,6 @@ Using the simple model, we achieved an accuracy of $60.62\%$ for LoL and $63.48\
 
 %\subsection{Organization of this Report}
 %The remaining of this report is organized as follows: Section II presents the collection of the data set, Section III introduces the learning model and assumptions,
-
 \section{Data Set Preparation}
 We have obtained two data sets for this study, one from the LoL and the other from DotA 2. The whole data set contains more than 80,000 independent game history records in total, which are adequate for our analysis in the first few steps.
 
@@ -139,6 +118,10 @@ As we all known that the performance of machine learning algorithms is heavily d
 Since the public APIs always return the most recent game records, we should first to check whether there is any redundancy in our data set. Besides, we need to make sure the data is useful, which can be verified from the game duration. For example, if the game duration is too short, then it is quite possible that some player leaves the game early, so that this record may not be able to support our learning goal and should be dropped. Finally, we will have a look at the KDA statistics, if some character's KDA is below a normal level, then this character may not fully participate into the game. Therefore, the corresponding record should also be dropped.
 
 After finishing these procedures, we can then extract features from the data and train our models.
+
+
+
+
 
 \section{Models and Assumptions}
 
@@ -268,6 +251,7 @@ During first half of the semester, we finished the goal we set in the proposal i
 \item run neural network on each data set
 \end{itemize}
 
+
 Our current results shows that the team composition does have connection with game results and the relationship is encodable. However, due to the limitation of original model, we proposed a second model to encode the relationship between selected characters and the players.
 
 For the remaining semester, our plan is shown as follows
@@ -280,163 +264,42 @@ To make the project successful, the minimum requirement is not longer the data c
 
 
 
-% An example of a floating figure using the graphicx package.
-% Note that \label must occur AFTER (or within) \caption.
-% For figures, \caption should occur after the \includegraphics.
-% Note that IEEEtran v1.7 and later has special internal code that
-% is designed to preserve the operation of \label within \caption
-% even when the captionsoff option is in effect. However, because
-% of issues like this, it may be the safest practice to put all your
-% \label just after \caption rather than within \caption{}.
-%
-% Reminder: the "draftcls" or "draftclsnofoot", not "draft", class
-% option should be used if it is desired that the figures are to be
-% displayed while in draft mode.
-%
-%\begin{figure}[!t]
-%\centering
-%\includegraphics[width=2.5in]{myfigure}
-% where an .eps filename suffix will be assumed under latex,
-% and a .pdf suffix will be assumed for pdflatex; or what has been declared
-% via \DeclareGraphicsExtensions.
-%\caption{Simulation Results}
-%\label{fig_sim}
-%\end{figure}
-
-% Note that IEEE typically puts floats only at the top, even when this
-% results in a large percentage of a column being occupied by floats.
 
 
-% An example of a double column floating figure using two subfigures.
-% (The subfig.sty package must be loaded for this to work.)
-% The subfigure \label commands are set within each subfloat command, the
-% \label for the overall figure must come after \caption.
-% \hfil must be used as a separator to get equal spacing.
-% The subfigure.sty package works much the same way, except \subfigure is
-% used instead of \subfloat.
-%
-%\begin{figure*}[!t]
-%\centerline{\subfloat[Case I]\includegraphics[width=2.5in]{subfigcase1}%
-%\label{fig_first_case}}
-%\hfil
-%\subfloat[Case II]{\includegraphics[width=2.5in]{subfigcase2}%
-%\label{fig_second_case}}}
-%\caption{Simulation results}
-%\label{fig_sim}
-%\end{figure*}
-%
-% Note that often IEEE papers with subfigures do not employ subfigure
-% captions (using the optional argument to \subfloat), but instead will
-% reference/describe all of them (a), (b), etc., within the main caption.
+\subsubsection*{Acknowledgments}
+
+We would like to thank Nicole and Prof. Gordon for their....
+
+\subsubsection*{References}
 
 
-% An example of a floating table. Note that, for IEEE style tables, the
-% \caption command should come BEFORE the table. Table text will default to
-% \footnotesize as IEEE normally uses this smaller font for tables.
-% The \label must come after \caption as always.
-%
-%\begin{table}[!t]
-%% increase table row spacing, adjust to taste
-%\renewcommand{\arraystretch}{1.3}
-% if using array.sty, it might be a good idea to tweak the value of
-% \extrarowheight as needed to properly center the text within the cells
-%\caption{An Example of a Table}
-%\label{table_example}
-%\centering
-%% Some packages, such as MDW tools, offer better commands for making tables
-%% than the plain LaTeX2e tabular which is used here.
-%\begin{tabular}{|c||c|}
-%\hline
-%One & Two\\
-%\hline
-%Three & Four\\
-%\hline
-%\end{tabular}
-%\end{table}
+References follow the acknowledgments. Use unnumbered third level heading for
+the references. Any choice of citation style is acceptable as long as you are
+consistent. It is permissible to reduce the font size to `small' (9-point)
+when listing the references. {\bf Remember that this year you can use
+a ninth page as long as it contains \emph{only} cited references.}
 
+\small{
 
-% Note that IEEE does not put floats in the very first column - or typically
-% anywhere on the first page for that matter. Also, in-text middle ("here")
-% positioning is not used. Most IEEE journals/conferences use top floats
-% exclusively. Note that, LaTeX2e, unlike IEEE journals/conferences, places
-% footnotes above bottom floats. This can be corrected via the \fnbelowfloat
-% command of the stfloats package.
+[1] Ian Sherr, ``Player Tally for League of Legends Surges,'' \textit{Digits RSS. N.p., n.d. Web}. 28 Sept, 2014.
 
+[2] Valve, Dota 2 -- 2014 Compendium -- The International. Dota 2 Official Website.
 
+Note that the following part is just for reference!
 
-%\section{Conclusion}
-%The conclusion goes here.
+[1] Alexander, J.A. \& Mozer, M.C. (1995) Template-based algorithms
+for connectionist rule extraction. In G. Tesauro, D. S. Touretzky
+and T.K. Leen (eds.), {\it Advances in Neural Information Processing
+Systems 7}, pp. 609-616. Cambridge, MA: MIT Press.
 
+[2] Bower, J.M. \& Beeman, D. (1995) {\it The Book of GENESIS: Exploring
+Realistic Neural Models with the GEneral NEural SImulation System.}
+New York: TELOS/Springer-Verlag.
 
+[3] Hasselmo, M.E., Schnell, E. \& Barkai, E. (1995) Dynamics of learning
+and recall at excitatory recurrent synapses and cholinergic modulation
+in rat hippocampal region CA3. {\it Journal of Neuroscience}
+{\bf 15}(7):5249-5262.
+}
 
-
-% conference papers do not normally have an appendix
-
-
-% use section* for acknowledgement
-%\section*{Acknowledgment}
-
-
-%The authors would like to thank...
-
-
-
-
-
-%p trigger a \newpage just before the given reference
-% number - used to balance the columns on the last page
-% adjust value as needed - may need to be readjusted if
-% the document is modified later
-%\IEEEtriggeratref{8}
-% The "triggered" command can be changed if desired:
-%\IEEEtriggercmd{\enlargethispage{-5in}}
-
-% references section
-
-% can use a bibliography generated by BibTeX as a .bbl file
-% BibTeX documentation can be easily obtained at:
-% http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
-% The IEEEtran BibTeX style support page is at:
-% http://www.michaelshell.org/tex/ieeetran/bibtex/
-%\bibliographystyle{IEEEtran}
-% argument is your BibTeX string definitions and bibliography database(s)
-%\bibliography{IEEEabrv,../bib/paper}
-%
-% <OR> manually copy in the resultant .bbl file
-% set second argument of \begin to the number of references
-% (used to reserve space for the reference number labels box)
-
-
-\begin{thebibliography}{10}
-
-\bibitem{Ian}
-Ian Sherr, ``Player Tally for League of Legends Surges,'' \textit{Digits RSS. N.p., n.d. Web}. 28 Sept, 2014.
-
-\bibitem{Valve}
-Valve, Dota 2 -- 2014 Compendium -- The International. Dota 2 Official Website.
-
-\end{thebibliography}
-
-
-
-
-% that's all folks
 \end{document}
-
-%\begin{table}[th]\label{Tab:data_content}
-%\centering
-%\begin{tabular}{|c|c|}
-%\hline
-%Content & Description \\
-%\hline
-%Game ID &  \\
-%\hline
-%Game Duration & . \\
-%\hline
-%Winner &  \\
-%\hline
-% Upper Adjacent & -17 \\
-%\hline
-%Digital TV & Lower Adjacent
-%\end{tabular}
-%\end{table}
