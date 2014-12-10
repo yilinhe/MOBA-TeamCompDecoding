@@ -57,8 +57,8 @@ Carnegie Mellon University, Pittsburgh, PA, 15213 \\
 \maketitle
 
 \begin{abstract}
-Team composition has been a interesting as well as challenging problem especially in the setting of competitive online games. A good team composition will strongly improve your chance for wining, while a bad team composition may probably ruin your game.
-In this report, we studied the team composition in the massive online battle arena (MOBA) games, and tried to decode the impact of team composition. We collected data from two most popular MOBA games, and then proposed two feature models to represent these data. Machine learning algorithms with different characteristics such as logistic regression and neural networks are used to evaluate our works, and our current results shows that the team composition does have influence on game results and this relationship is decodable.
+Team composition has been a interesting as well as challenging problem especially in the setting of competitive online games. A good team composition will strongly improve your chance for wining the game, while a bad team composition may probably ruin your game.
+In this project, we studied the team composition in the massive online battle arena (MOBA) games, and tried to analyze the impact of team composition on the game result. The data we used are collected from two most popular MOBA games DotA 2 and LoL, and we proposed two feature models to represent these data. Machine learning algorithms with different characteristics such as logistic regression (LR), support vector machine (SVM) and deep belief networks (DBN) are used to train the predicting model, and our final results shows that the team composition does have influence on game results and this relationship is decodable.
 \end{abstract}
 
 \section{Introduction}
@@ -70,13 +70,14 @@ In this report, we studied the team composition in the massive online battle are
 
 Multiplayer online battle arena (MOBA) is a rising force in online games that has features of fast paced, single round and team play. In the past few months, more than 27 million players fight with each other per day in one of such kind of game called League of Legends (LoL)\cite{Ian} while millions are attracted by another game called Defense of the Ancient 2 (DotA2). International MOBA tournaments are held over the world with a prize pool of over \$10 million\cite{Valve}.  Analysis on MOBA games will not only gain us experience of data analysis but will also be beneficial to players and game companies all over the world.
 
-In MOBA games like LoL or DotA 2, two groups of five players are pitted against each other based on their level of game proficiency. In the beginning of a game, each player first picks an unique character out of over 100 options, and these 5 characters picked in a group finally forms a team. Given that the game server usually matches the players with similar levels within a game, then the result of a game should not be affected too much by the skill of each individual player, but depends on the characters combination of different teams, which is known as team composition.
+In MOBA games like LoL or DotA 2, two groups of five players are pitted against each other based on their level of game proficiency. In the beginning of a game, each player first picks an unique character out of over 100 options, and these 5 characters picked in a group finally forms a team. Given that the game server usually matches the players with similar levels within a game, then the result of a game will not be influenced too much by the skill of each individual player, but depends on the combination of
+picked characters in each group, which is known as team composition.
 
-An interesting questions to the online communities as well as professional teams is how to form a good team composition to achieve highest winning probability. The challenging part for this problem is the large number of possible team composition. Since each game contains more than 100 characters, there are more than $\binom{100}{10}\cdot\binom{10}{5}$ kinds of team composition in LoL or DotA 2.
+An interesting question to the online communities as well as professional teams is how to form a good team composition that can achieve the highest probability to win the game. The challenging part for this problem is the large number of possible team compositions. To be specific, since there are generally more than 100 characters for players
+to choose, the number of possible team compositions for both teams are more than $\binom{100}{10}\cdot\binom{10}{5}\approx ?????$.
 
-\subsection{Goal and Progress}
 
-To answer this question, we can translate it into a classic machine learning problem: given a team composition, predict the outcome for the game. Then we can interpret the parameters in our machine learning algorithm to understand how to form a team composition for MOBA games.
+To answer this question, we can transform it into a classification problem in machine learning: given a team composition, predict the result for the game. With this problem transformation, we can learn how to form a good team composition by interpreting the learning model parameters and then form good team composition in practice by using the learned model for prediction and recommendation.
 
 In the midpoint, we have successfully fulfilled the goal defined in the proposal.
 We collected and cleaned up data for both LoL and DotA 2.
@@ -90,7 +91,7 @@ Using the simple model, we achieved an accuracy of $60.62\%$ for LoL and $63.48\
 %\subsection{Organization of this Report}
 %The remaining of this report is organized as follows: Section II presents the collection of the data set, Section III introduces the learning model and assumptions,
 \section{Data Set Preparation}
-We have obtained two data sets for this study, one from the LoL and the other from DotA 2. The whole data set contains more than 80,000 independent game history records in total, which are adequate for our analysis in the first few steps.
+We have obtained two data sets for this study, one from the LoL and the other from DotA 2. The whole data set contains more than 80,000 independent game history records in total, which are adequate for this project.
 
 \subsection{Data Collection}
 
@@ -123,12 +124,13 @@ After finishing these procedures, we can then extract features from the data and
 
 
 
+
 \section{Models and Assumptions}
 
 In this section, we proposed two models for decoding team composition. The first model is based on ranking the performance of each character while the second model takes the group effect into consideration. We take the first model as the baseline, and mainly apply our ideas in the second model.
 
 
-To start discussing the models,  let us first define the two teams in the game as $\mathcal{A}$ and $\mathcal{B}$, where each team contains five unique characters (i.e., $c_1,c_2\ldots,c_5$). Moreover, suppose that the game has $N$ characters, then all the characters can be encoded with an integer between $1$ and $N$.
+To start discussing the models,  let us first define the two teams in the game as $\mathcal{A}$ and $\mathcal{B}$, where each team contains five unique characters (i.e., $c_1,c_2\ldots,c_5$). Moreover, suppose that the game has $N$ characters in total, and all the characters can be encoded with an integer between $1$ and $N$.
 
 \subsection{Model-I: Character Ranking Model}
 
